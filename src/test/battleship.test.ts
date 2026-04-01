@@ -1,0 +1,407 @@
+// This file is part of example-battleship.
+// Copyright (C) Midnight Foundation
+// SPDX-License-Identifier: Apache-2.0
+// Licensed under the Apache License, Version 2.0 (the "License");
+// You may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+
+/**
+ * This test suite aims to demonstrate interaction with
+ * the contract through midnight-js more than as a comprehensive test suite. 
+ * Some test cases may not be present.
+ */
+import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { randomBytes } from 'node:crypto';
+import pino from 'pino';
+import { networkId, contracts } from '@midnight-ntwrk/midnight-js';
+import type { ContractAddress } from '@midnight-ntwrk/compact-runtime';
+import type { EnvironmentConfiguration } from '@midnight-ntwrk/testkit-js';
+import { getConfig } from '../config.js';
+import { MidnightWalletProvider, syncWallet } from '../wallet.js';
+import { buildProviders, type BattleshipProviders } from '../providers.js';
+import {
+    CompiledBattleshipContract,
+    ledger,
+    zkConfigPath,
+} from '../../contract/index.js';
+import { 
+    BoardState, 
+    ShotState, 
+    WinState,
+    TurnState
+} from '../../contract/managed/battleship/contract/index.js';
+import { createBattlePrivateState } from '../../contract/witnesses.js';
+
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('UNHANDLED REJECTION:', reason);
+  console.error('Promise:', promise);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err);
+});
+
+const ALICE_SEED = '0000000000000000000000000000000000000000000000000000000000000001';
+const BOB_SEED = '0000000000000000000000000000000000000000000000000000000000000002';
+const ALICE_PRIVATE_ID = 'alicePrivateState';
+const BOB_PRIVATE_ID = 'bobPrivateState';
+
+const logger = pino({
+    level: process.env['LOG_LEVEL'] ?? 'info',
+    transport: { target: 'pino-pretty' },
+});
+
+describe('Battleship Smart Contract via midnight-js', async () => {
+    let aliceWallet: MidnightWalletProvider;
+    let bobWallet: MidnightWalletProvider;
+    let aliceProviders: BattleshipProviders;
+    let bobProviders: BattleshipProviders;
+    let contractAddress: ContractAddress;
+
+    const config = getConfig();
+    const board1Hit1 = BigInt(1);
+    const board2Hit1 = BigInt(1);
+    const board1Hit2 = BigInt(2);
+    const board2Hit2 = BigInt(2);
+
+    async function queryLedger(providers: BattleshipProviders) {
+        const state = await providers.publicDataProvider.queryContractState(contractAddress);
+        expect(state).not.toBeNull();
+        return ledger(state!.data);
+    }
+
+    // setup before tests
+    beforeAll(async () => {
+        networkId.setNetworkId(config.networkId);
+
+        const envConfig: EnvironmentConfiguration = {
+            walletNetworkId: config.networkId,
+            networkId: config.networkId,
+            indexer: config.indexer,
+            indexerWS: config.indexerWS,
+            node: config.node,
+            nodeWS: config.nodeWS,
+            faucet: config.faucet,
+            proofServer: config.proofServer,
+        };
+
+        aliceWallet = await MidnightWalletProvider.build(logger, envConfig, ALICE_SEED);
+        await aliceWallet.start();
+        await syncWallet(logger, aliceWallet.wallet, 600_000);
+
+        bobWallet = await MidnightWalletProvider.build(logger, envConfig, BOB_SEED);
+        await bobWallet.start();
+        await syncWallet(logger, bobWallet.wallet, 600_000);
+
+        aliceProviders = buildProviders(aliceWallet, zkConfigPath, config);
+        bobProviders = buildProviders(bobWallet, zkConfigPath, config);
+
+        logger.info('Providers initialized, ready to test.');
+    });
+
+    // tear down after tests
+    afterAll(async () => {
+        if(aliceWallet) {
+            logger.info('Stopping aliceWallet...');
+            await aliceWallet.stop();
+        }
+        if(bobWallet) {
+            logger.info('Stopping bobWallet...');
+            await bobWallet.stop();
+        }
+    });
+
+    it('deploys the contract', async () => {
+
+        const aliceSk = randomBytes(32);
+        const alicePrivateState = createBattlePrivateState(
+            BigInt(1),// x1 ship location
+            BigInt(2),// x2
+            BoardState.UNSET,
+            ShotState.MISS,
+            aliceSk,
+        );
+
+        const deployed: any = await (contracts.deployContract as any)(aliceProviders, {
+            compiledContract: CompiledBattleshipContract,
+            privateStateId: ALICE_PRIVATE_ID,
+            initialPrivateState: alicePrivateState,
+            args: [alicePrivateState.x1, alicePrivateState.x2]
+        });
+
+        aliceProviders.privateStateProvider.setContractAddress(contractAddress);
+        await aliceProviders.privateStateProvider.set(ALICE_PRIVATE_ID, alicePrivateState);
+
+        contractAddress = deployed.deployTxData.public.contractAddress;
+        logger.info(`Contract deployed at: ${contractAddress}`);
+        expect(contractAddress).toBeDefined();
+        expect(contractAddress.length).toBeGreaterThan(0);
+
+        const state = await queryLedger(aliceProviders);
+        expect(state.board1State).toEqual(BoardState.SET);
+        expect(state.board2State).toEqual(BoardState.UNSET);
+        expect(state.winState).toEqual(WinState.CONTINUE_PLAY);
+    });
+    it('Allows Bob to acceptGame', async () => {
+        
+        const bobSk = randomBytes(32);
+        const bobInitialPrivateState = createBattlePrivateState(
+            BigInt(1),
+            BigInt(2),
+            BoardState.UNSET,
+            ShotState.MISS,
+            bobSk
+        );
+
+        bobProviders.privateStateProvider.setContractAddress(contractAddress);
+        await bobProviders.privateStateProvider.set(BOB_PRIVATE_ID, bobInitialPrivateState);
+        const bobPrivateState = await bobProviders.privateStateProvider.get(BOB_PRIVATE_ID);
+
+        logger.info(`Bob is accepting the game...`);
+        const txData: any = await (contracts.submitCallTx as any)(bobProviders, {
+            compiledContract: CompiledBattleshipContract,
+            contractAddress,
+            privateStateId: BOB_PRIVATE_ID,
+            circuitId: 'acceptGame',
+            args: [bobPrivateState.x1, bobPrivateState.x2]
+        });
+        logger.info(`Bob successfully joined the game!`);
+
+        const state = await queryLedger(bobProviders);
+        expect(state.board2State).toEqual(BoardState.SET);
+        expect(state.board2.size()).toEqual(2n);
+        expect(state.turn).toEqual(TurnState.PLAYER_1_SHOOT);
+    });
+    it('Allows Alice to take the first shot(MISS)', async () => {
+        const shot = BigInt(5);// miss
+
+        logger.info(`Bob tries to shoot out of turn...`);
+        await expect(async () => {
+            await (contracts.submitCallTx as any)(bobProviders, {
+                compiledContract: CompiledBattleshipContract,
+                contractAddress,
+                privateStateId: BOB_PRIVATE_ID,
+                circuitId: 'player2Shoot',
+                args: [BigInt(1)]// arbitrary
+            });
+        }).rejects.toThrow();
+        logger.info(`Bobs shot (out of turn) was rejected!`);
+
+        logger.info(`Alice shoots (MISS) at Bobs board...`);
+        const txData: any = await (contracts.submitCallTx as any)(aliceProviders, {
+            compiledContract: CompiledBattleshipContract,
+            contractAddress,
+            privateStateId: ALICE_PRIVATE_ID,
+            circuitId: 'player1Shoot',
+            args: [shot]
+        });
+        logger.info(`Alice shot successfully!`);
+
+        const state = await queryLedger(aliceProviders);
+        expect(state.board2HitCount).toEqual(0n);
+        expect(state.player1Shot.head().is_some).toBeTruthy();
+        expect(state.player1Shot.head().value).toEqual(shot);
+        expect(state.turn).toEqual(TurnState.PLAYER_2_CHECK);
+    });
+    it('Allows Bob to check the board (MISS)', async () => {
+
+        logger.info(`Bob checks his board...`);
+        const txData: any = await (contracts.submitCallTx as any)(bobProviders, {
+            compiledContract: CompiledBattleshipContract,
+            contractAddress,
+            privateStateId: BOB_PRIVATE_ID,
+            circuitId: 'checkBoard2',
+            args: []
+        });
+        logger.info(`Bob successfully checked his board!`);
+
+        const state = await queryLedger(bobProviders);
+        expect(state.winState).toEqual(WinState.CONTINUE_PLAY);
+        expect(state.board2HitCount).toEqual(0n);
+        expect(state.turn).toEqual(TurnState.PLAYER_2_SHOOT);
+    });
+    it('Allows Bob to shoot(HIT)', async () => {
+
+        logger.info(`Bob shoots at Alice's board (HIT)`);
+        const txData: any = await (contracts.submitCallTx as any)(bobProviders, {
+            compiledContract: CompiledBattleshipContract,
+            contractAddress,
+            privateStateId: BOB_PRIVATE_ID,
+            circuitId: 'player2Shoot',
+            args: [board1Hit1]
+        });
+        logger.info(`Bob shot successfully!`);
+
+        const state = await queryLedger(bobProviders);
+        expect(state.player2Shot.head().is_some).toBeTruthy();
+        expect(state.player2Shot.head().value).toEqual(board1Hit1);
+        expect(state.winState).toEqual(WinState.CONTINUE_PLAY);
+        expect(state.turn).toEqual(TurnState.PLAYER_1_CHECK);
+    });
+    it('Allows Alice to check the board and report a hit', async () => {
+
+        logger.info(`Alice is checking the board...`);
+        const txData: any = await (contracts.submitCallTx as any)(aliceProviders, {
+            compiledContract: CompiledBattleshipContract,
+            contractAddress,
+            privateStateId: ALICE_PRIVATE_ID,
+            circuitId: 'checkBoard1',
+            args: []
+        });
+        logger.info(`Alice has finished checking the board!`);
+
+        const state = await queryLedger(aliceProviders);
+        expect(state.player2Shot.head().is_some).toBeFalsy();
+        expect(state.board1HitCount).toEqual(1n);
+        expect(state.board1Hits.member(board1Hit1)).toBeTruthy();
+        expect(state.winState).toEqual(WinState.CONTINUE_PLAY);
+        expect(state.turn).toEqual(TurnState.PLAYER_1_SHOOT);
+    });
+    it('Allows Alice to shoot again (HIT)', async () => {
+        
+        logger.info(`Alice shoots (HIT) at Bobs board...`);
+        const txData: any = await (contracts.submitCallTx as any)(aliceProviders, {
+            compiledContract: CompiledBattleshipContract,
+            contractAddress,
+            privateStateId: ALICE_PRIVATE_ID,
+            circuitId: 'player1Shoot',
+            args: [board2Hit1]
+        });
+        logger.info(`Alice shot successfully!`);
+
+        const state = await queryLedger(aliceProviders);
+        expect(state.board2HitCount).toEqual(0n);
+        expect(state.player1Shot.head().is_some).toBeTruthy();
+        expect(state.player1Shot.head().value).toEqual(board2Hit1);
+        expect(state.turn).toEqual(TurnState.PLAYER_2_CHECK);
+    });
+    it('Stops Bob from being a cheater', async () => {
+
+        logger.info(`Bob realizes it is going to be a HIT and tries to cheat...`);
+        const bobPrivateState = await bobProviders.privateStateProvider.get(BOB_PRIVATE_ID);
+        const cheatBobPrivateState = createBattlePrivateState(
+            BigInt(10),
+            BigInt(11),
+            BoardState.SET,
+            ShotState.MISS,
+            bobPrivateState.sk,
+        );
+        await bobProviders.privateStateProvider.set(BOB_PRIVATE_ID, cheatBobPrivateState);
+        await expect(async () => {
+            await (contracts.submitCallTx as any)(bobProviders, {
+                compiledContract: CompiledBattleshipContract,
+                contractAddress,
+                privateStateId: BOB_PRIVATE_ID,
+                circuitId: 'checkBoard2',
+                args: []
+            });
+        }).rejects.toThrow();
+        logger.info(`Bobs cheating attempt was rejected!`);
+
+        logger.info(`Bob is resetting his board to the original private state...`);
+        await bobProviders.privateStateProvider.set(BOB_PRIVATE_ID, bobPrivateState);
+        logger.info(`Bob successfully reverted his private state to the original!`);
+
+        const state = await queryLedger(aliceProviders);
+        expect(state.board2HitCount).toEqual(0n);
+        expect(state.player1Shot.head().is_some).toBeTruthy();
+        expect(state.player1Shot.head().value).toEqual(board2Hit1);
+        expect(state.turn).toEqual(TurnState.PLAYER_2_CHECK);
+    });
+    it('Allows Bob to check the board for a HIT', async () => {
+
+        logger.info(`Bob checks his board...`);
+        const txData: any = await (contracts.submitCallTx as any)(bobProviders, {
+            compiledContract: CompiledBattleshipContract,
+            contractAddress,
+            privateStateId: BOB_PRIVATE_ID,
+            circuitId: 'checkBoard2',
+            args: []
+        });
+        logger.info(`Bob successfully checked his board!`);
+
+        const state = await queryLedger(bobProviders);
+        expect(state.winState).toEqual(WinState.CONTINUE_PLAY);
+        expect(state.board2HitCount).toEqual(1n);
+        expect(state.board2Hits.member(board2Hit1)).toBeTruthy();
+        expect(state.turn).toEqual(TurnState.PLAYER_2_SHOOT);
+    });
+    it('Allows Bob to shoot the winning shot', async () => {
+
+        logger.info(`Bob shoots his second shot(HIT)...`);
+        const txData: any = await (contracts.submitCallTx as any)(bobProviders, {
+            compiledContract: CompiledBattleshipContract,
+            contractAddress,
+            privateStateId: BOB_PRIVATE_ID,
+            circuitId: 'player2Shoot',
+            args: [board1Hit2],
+        });
+        logger.info(`Bob successfully shoots!`);
+
+        const state = await queryLedger(bobProviders);
+        expect(state.player2Shot.head().is_some).toBeTruthy();
+        expect(state.player2Shot.head().value).toEqual(board1Hit2);
+        expect(state.winState).toEqual(WinState.CONTINUE_PLAY);
+        expect(state.turn).toEqual(TurnState.PLAYER_1_CHECK);
+    });
+    it('Stops Alice from cheating by changing her ship location', async () => {
+
+        logger.info(`Alice realizes she is going to lose, so tries to change the ship location...`);
+        const oldAlicePrivateState = await aliceProviders.privateStateProvider.get(ALICE_PRIVATE_ID);
+        
+        // create new private state after retrieving current private state. Not strictly necessary.
+        let newAlicePrivateState = await aliceProviders.privateStateProvider.get(ALICE_PRIVATE_ID);
+        newAlicePrivateState = createBattlePrivateState(
+            BigInt(1),
+            BigInt(10),// changed the location locally, but can't change contract
+            BoardState.SET,
+            ShotState.MISS,
+            newAlicePrivateState.sk,
+        );
+        await aliceProviders.privateStateProvider.set(ALICE_PRIVATE_ID, newAlicePrivateState);
+
+        await expect(async () => {
+            await (contracts.submitCallTx as any)(aliceProviders, {
+                compiledContract: CompiledBattleshipContract,
+                contractAddress,
+                privateStateId: ALICE_PRIVATE_ID,
+                circuitId: 'checkBoard1',
+                args: []
+            });
+        }).rejects.toThrow();
+        logger.info(`Alice was rejected from changing the ship location!`);
+
+        logger.info(`Alice resets to original ship location...`);
+        await aliceProviders.privateStateProvider.set(ALICE_PRIVATE_ID, oldAlicePrivateState);
+        logger.info(`Reverted Alice's private state correctly!`);
+
+    });
+    it('Allows Alice to check the board and realize she lost...', async () => {
+        
+        logger.info(`Alice is checking the board...`);
+        const txData: any = await (contracts.submitCallTx as any)(aliceProviders, {
+            compiledContract: CompiledBattleshipContract,
+            contractAddress,
+            privateStateId: ALICE_PRIVATE_ID,
+            circuitId: 'checkBoard1',
+            args: []
+        });
+        logger.info(`Alice has finished checking the board!`);
+
+        const state = await queryLedger(aliceProviders);
+        expect(state.player2Shot.head().is_some).toBeFalsy();
+        expect(state.board1HitCount).toEqual(2n);
+        expect(state.board1Hits.member(board1Hit2)).toBeTruthy();
+        expect(state.winState).toEqual(WinState.PLAYER_2_WINS);
+        logger.info(`Bob wins!`);
+    });
+});
