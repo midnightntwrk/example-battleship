@@ -7,7 +7,7 @@ This example aims to demonstrate several key features of Compact and Midnight JS
 - Explicit state management
 - Verification of private state data
 - Access control to circuits
-- Operations on a List
+- Operations on a `List`
 - Intermediate witness functionality
 
 ## Set up project
@@ -91,4 +91,4 @@ The test script will begin to display output from your local devnet and test sui
 Done in 227.08s.
 ```
 
-This repository is currently only set up to support a local devnet running via Docker. However, the configurations and handling of those configs need only be set up in `config.ts` and supporting files to enable this functionality.
+This repository is currently only set up to support a local devnet running via Docker. The configurations for other networks and handling of those configs can be set up in `config.ts` and supporting files to enable their operation.
