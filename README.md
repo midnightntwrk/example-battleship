@@ -3,7 +3,7 @@
 This repository demonstrates a simple version of the board game Battleship. The game board is represented as a single number line and ships are a single number placed on the number line. The first player to guess the 2 ship locations wins the game.
 
 This example aims to demonstrate several key features of Compact and Midnight JS including:
-- Compact contracts as state machiens
+- Compact contracts as state machines
 - Explicit state management
 - Verification of private state data
 - Access control to circuits
