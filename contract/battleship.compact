@@ -50,7 +50,7 @@ witness localCheckBoard(x: Uint<8>) : ShotState;
 witness localSk(): Bytes<32>;
 
 constructor(_x1: Uint<8>, _x2: Uint<8>) {
-    // input verificaiton checks
+    // input verification checks
     assert(_x1 != _x2, "Cannot use the same number twice");
     assert(_x1 > 0 && _x2 > 0, "No zero index, board starts at 1");
     assert(_x1 <= 20 && _x2 <= 20, "Out of bounds, please keep ships on the board");
