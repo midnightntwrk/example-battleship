@@ -22,7 +22,7 @@ import { levelPrivateStateProvider } from '@midnight-ntwrk/midnight-js-level-pri
 import { type MidnightWalletProvider } from './wallet.js';
 import { type NetworkConfig } from './config.js';
 
-export type BattleshipCircuits = 'acceptGame' | 'player1Shoot' | 'checkboard1' | 'player2Shoot' | 'checkboard2';
+export type BattleshipCircuits = 'acceptGame' | 'player1Shoot' | 'checkBoard1' | 'player2Shoot' | 'checkBoard2';
 
 export type BattleshipProviders = MidnightProviders<any>;
 
