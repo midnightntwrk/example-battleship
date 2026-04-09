@@ -91,4 +91,36 @@ The test script will begin to display output from your local devnet and test sui
 Done in 227.08s.
 ```
 
+To run the zkir linter, from the project root run:
+```bash
+npx compact-zkir-lint -r contract/managed/battleship/zkir
+```
+
+The output should look like this:
+```
+zkir-lint: scanned 5 file(s)
+
+  acceptGame (v2, k=12): clean
+    instructions: 159  inputs: 2  constrain_bits: 4  cond_select: 6
+    guarded regions: 0 (max depth 0)  proof payload: ~192KB
+
+  checkBoard1 (v2, k=12): clean
+    instructions: 400  inputs: 0  constrain_bits: 2  cond_select: 62
+    guarded regions: 0 (max depth 1)  proof payload: ~192KB
+
+  checkBoard2 (v2, k=12): clean
+    instructions: 416  inputs: 0  constrain_bits: 2  cond_select: 61
+    guarded regions: 0 (max depth 1)  proof payload: ~192KB
+
+  player1Shoot (v2, k=11): clean
+    instructions: 185  inputs: 1  constrain_bits: 3  cond_select: 4
+    guarded regions: 0 (max depth 0)  proof payload: ~96KB
+
+  player2Shoot (v2, k=11): clean
+    instructions: 168  inputs: 1  constrain_bits: 3  cond_select: 4
+    guarded regions: 0 (max depth 0)  proof payload: ~96KB
+
+0 error(s), 0 warning(s), 0 info(s) | 5/5 clean
+```
+
 This repository is currently only set up to support a local devnet running via Docker. The configurations for other networks and handling of those configs can be set up in `config.ts` and supporting files to enable their operation.
