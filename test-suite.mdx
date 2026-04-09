@@ -105,7 +105,6 @@ export default defineConfig({
 ### compose.yml
 
 Finally, let's add the docker configuration for deploying to local devnet:
-
 ```bash
 touch compose.yml
 ```
@@ -474,7 +473,7 @@ import {
     Contract
 } from '../../contract/managed/battleship/contract/index.js';
 import { createBattlePrivateState } from '../../contract/witnesses.js';
-import type { FinalizedCallTxData } from '@midnight-ntwrk/midnight-js/contracts';
+import type { DeployedContract,FinalizedCallTxData } from '@midnight-ntwrk/midnight-js/contracts';
 ```
 
 ### Wallet preparation
@@ -485,9 +484,14 @@ const ALICE_SEED = '000000000000000000000000000000000000000000000000000000000000
 const BOB_SEED = '0000000000000000000000000000000000000000000000000000000000000002';
 const ALICE_PRIVATE_ID = 'alicePrivateState';
 const BOB_PRIVATE_ID = 'bobPrivateState';
+
+const logger = pino({
+    level: process.env['LOG_LEVEL'] ?? 'info',
+    transport: { target: 'pino-pretty' },
+});
 ```
 
-Local devnet comes with pre-funded addresses for the first 3 seed accounts. We'll use Alice as one and Bob as two. Each user also needs a string for identifying their private state.
+Local devnet comes with pre-funded addresses for the first 3 seed accounts. We'll use Alice as one and Bob as two. Each user also needs a string for identifying their private state before creating a helper for logging.
 
 Let's setup our main test:
 ```typescript
@@ -669,7 +673,7 @@ Now that we have our first test let's run it and see if it passes. Be sure the d
 yarn env:up
 ```
 
-Local devnet requires a Node, Indexer and Proof server running locally, so be sure to leave these services running for the duration of these tests.
+Local devnet requires a Node, Indexer and Proof server running locally, so be sure to leave these services running for the duration of these tests and check the status of the container before moving on to the next step.
 
 In a *seperate terminal*, execute the test script against local devnet:
 ```bash
@@ -814,6 +818,10 @@ No cheating Bob.
 ### Test yourself
 
 Now that you've seen the pattern for successful and failing calls, write some tests yourself that progress the interaction of the contract. Look back at the `.compact` code to verify the state after a certain circuit executes and check these through `queryLedger()` at the end of each test.
+
+:::note
+`submitCallTx` calls to circuits with no arguments should omit the `args` field.
+:::
 
 For a challenge, work with the returned `txData` from `submitCallTx` to inspect and operate on the data there.
 

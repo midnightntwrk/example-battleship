@@ -78,6 +78,9 @@ Compact contracts are best thought of as state machines, so we need to consider 
 
 By managing each of these states explicitly and pairing them with `assert` statements, we can restrict access to only the specific function we want to be available at any given state. For example, using `TurnState`, we can ensure that a player shoots only when it is their turn.
 
+Turn order:
+PLAYER_1_SHOOT → PLAYER_2_CHECK → PLAYER_2_SHOOT → PLAYER_1_CHECK → repeat
+
 ## Compact Tutorial
 
 Compact provides the right mix of public and private data management to enable our Battleship implementation elegantly.
@@ -87,9 +90,9 @@ Compact provides the right mix of public and private data management to enable o
 Let's start with our compact code:
 ```bash
 mkdir example-battleship && cd example-battleship
+code .
 mkdir contract && cd contract
 touch battleship.compact
-code .
 ```
 
 The first thing to do is declare the language version and imports:
@@ -440,7 +443,7 @@ Now that we know we have one of two possible valid states, we can conditionally 
 
     } else { 
 
-// end of checkBoard1
+}// end of checkBoard1
 ```
 
 The `assert` here is what keeps players honest. It is not possible for this data to be changed or falsified. If `player1` attempts to cheat, the contract detects this and rejects the interaction.
@@ -524,7 +527,7 @@ compact compile battleship.compact managed/battleship
 
 To further inspect circuit data run the zkir linter:
 ```bash
-npx compact-zkir-linter -r managed/battleship/zkir
+npx compact-zkir-lint -r managed/battleship/zkir
 ```
 
 ## Witness Tutorial

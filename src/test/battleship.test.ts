@@ -42,7 +42,7 @@ import {
     Contract
 } from '../../contract/managed/battleship/contract/index.js';
 import { createBattlePrivateState } from '../../contract/witnesses.js';
-import type { FinalizedCallTxData } from '@midnight-ntwrk/midnight-js/contracts';
+import type { DeployedContract, FinalizedCallTxData } from '@midnight-ntwrk/midnight-js/contracts';
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('UNHANDLED REJECTION:', reason);
