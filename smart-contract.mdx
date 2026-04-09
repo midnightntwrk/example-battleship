@@ -1,6 +1,6 @@
 # Battleship Tutorial
 
-The Battleship example is an intermediate level contract that will demonstrate the following features:
+The Battleship example is an intermediate level tutorial that demonstrates the following features:
 - Compact contracts as state machines
 - Explicit state management
 - Private state data (setting, getting, updating, verifying, maliciously manipulating)
@@ -18,7 +18,7 @@ Before you begin this tutorial, ensure you have:
 
 Battleship is a classic strategy type guessing game for two players. It is played on two individual grids with each player's ships marked on their grid. The location of a player's ships are hidden from the other player. Players alternate turns calling "shots" at the other player's ships with the objective of "sinking" those ships. The first player to correctly hit all of the oppossing ships wins.  
 
-Battleship is centered around the idea of private data (ships) and public data (shots, hits) being used in combination. The board game version comes with significant trust assumptions that make it vulnerable to malicious actors. A player could simply claim a MISS when it was in fact a HIT, they could move their ship in the middle of the game (change private state), they could look around the board at the location of the opposing players ships and ensure a victory.
+Battleship is centered around the idea of private data (ships) and public data (shots, hits) being used in combination. The board game version comes with significant trust assumptions that make it vulnerable to malicious actors. A player could simply claim a MISS when it was in fact a HIT, they could move their ship in the middle of the game (change private state), they could even look around the board at the location of the opposing players ships to ensure a victory.
 
 Using blockchain, we can enforce the rules of this game easily by moving those trust assumptions on-chain and with Midnight, we can hide the private data in plain sight while verifying its validity in a players private state.
 
@@ -26,24 +26,24 @@ Using blockchain, we can enforce the rules of this game easily by moving those t
 
 For the purposes of simplifying the code associated with this tutorial, we'll implement a more basic version of the game. The main differences in our version will be:
 1. Using a single number line instead of a grid
-1. Use a single number on the line to indicate a ships position
+1. A single number on the line represents the position of a ship
 1. Reduce the number of HITS required to win to two
 
 ### Operational Components
 
 First, let's consider the operational components of our contract. In order, it needs to:
-1. Player1 deploys the contract and sets their board
-2. Player2 joins the game and sets their board
-3. Player1 shoots at board2
-4. Player2 checks their board for a HIT or MISS
-5. Player2 shoots at board1
-6. Player1 checks their board for HIT or MISS
+1. Deploy the contract and allow player 1 to set their board
+2. Allow player 2 to join the game and set their board
+3. Player 1 shoots at board 2
+4. Player 2 checks their board for a HIT or MISS
+5. Player 2 shoots at board 1
+6. Player 1 checks their board for HIT or MISS
 7. Steps 3-6 continue until `board1Hits == 2 || board2Hits == 2`
 8. Assign a winner
 
 ### Public vs Private Data
 
-One of the more challenging ideas in developing Midnight DApps is the mix of private and public data. What best-practice strategies are recommended to ensure data is handled as intended and where in our programs is data public. In our game, both players have the same needs in regard to their data:
+One of the more challenging ideas in developing Midnight DApps is the mix of private and public data. Adhering to best-practice strategies is recommended to ensure data is handled as intended and only made public when necessary. In our game, both players have the same needs in reference to their data:
 
 | Pulic Data | Private Data |
 | ---------- | ------------ |
@@ -58,7 +58,7 @@ In order to enforce the rules of the game and ensure that neither player cheats,
 
 The most common way that players cheat in Battleship is to claim a MISS when a particular "shot" was in fact a HIT. In the case of our Dapp, this means that a player attempts to maliciously manipulate their private state data. 
 
-We'll use verification checks to ensure the validity of a ShotState to indicate a MISS was in fact a MISS, so that there is need to trust Alice and Bob, we can enforce that trust through our Compact code. We'll add specific tests in our frontend test suite to attempt to exploit our contract in this way, but rest assured that these will be rejected by the Compact logic.
+We'll use verification checks to ensure the validity of a `ShotState` to indicate a MISS was in fact a MISS, so that there is no need to trust Alice or Bob, we can enforce that trust through our Compact code. We'll add specific tests in our frontend test suite to attempt to exploit our contract in this way and verify that these will be rejected by the Compact contract.
 
 The contract will handle several cheating vectors such as:
 - Double shots
@@ -76,8 +76,7 @@ Compact contracts are best thought of as state machines, so we need to consider 
 - WinState
 - TurnState
 
-By managing each of these states explicitly and pairing them with `assert`s, we can restrict access to only the specific function we want to be available at any given state. For example, using TurnState, we can ensure that a player shoots only when it is their turn.
-
+By managing each of these states explicitly and pairing them with `assert` statements, we can restrict access to only the specific function we want to be available at any given state. For example, using `TurnState`, we can ensure that a player shoots only when it is their turn.
 
 ## Compact Tutorial
 
@@ -140,16 +139,16 @@ All ledger fields are publicly visible. In order to hide private data in these f
 
 To set and access private state data, we'll declare a few `witness` functions.
 ```compact
+witness localSk(): Bytes<32>;
 witness localSetBoard(_x1: Uint<8>, _x2: Uint<8>): BoardState;
 witness localCheckBoard(x: Uint<8>): ShotState;
-witness localSk(): Bytes<32>;
 ```
 
 Witness functions are declared in Compact, but their implementation is left to the Typescript frontend. *Never trust data from a witness* function without strictly verifying it first. Each Typescript instance has the ability to manipulate these functions and therefore a Compact contract can never assume that a witness function was implemented as expected. Verify this data rigorously through `assert` statements.
 
 ### Constructor
 
-Let's set up the contructor that executes on contract deployment. For simplicity, let's assume that player1 (Alice) is deploying the contract so that we can bundle a few operations together.
+Let's set up the contructor that executes on contract deployment. For simplicity, let's assume that `player1` (Alice) is deploying the contract so that we can bundle a few operations together.
 
 First we validate the inputs are within the boundaries of the game:
 ```compact
@@ -162,9 +161,9 @@ constructor(_x1: Uint<8>, _x2: Uint<8>) {
 }// end of constructor
 ```
 
-The use of an underscore(_x1) in front of an identifier is best practice in cryptography. It does nothing for the compiler, but it helps you as a developer better track information needing to remain private. 
+The use of an underscore(_x1) in front of an identifier is a good practice in cryptography to track management of private data. It does nothing for the compiler, but it helps you as a developer better track information needing to remain private. 
 
-We can then assign a Dapp specific public key for player1:
+We can then assign a Dapp specific public key for `player1`:
 ```compact
     // user id and assignment
     const _sk = localSk();
@@ -174,7 +173,7 @@ We can then assign a Dapp specific public key for player1:
 }// end of constructor
 ```
 
-This pattern accesses a secret key from the players private state, hashing that with a domain seperator so that user interactions can be traced inside this dapp, but not outside of it. We'll write the `getDappPublicKey` circuit later.
+This pattern accesses a secret key from the player's private state, hashing that with a domain seperator so that user interactions can be traced inside this dapp, but not outside of it. We'll write the `getDappPublicKey` circuit later.
 
 In order to store private state data (_x1, _x2) publicly, we need to hash that data:
 ```compact
@@ -191,7 +190,6 @@ Storing hashes computed in this way makes it impossible to derive the private st
 
 We'll now ask the user to set these ship locations on their local board:
 ```compact
-    // best practice example -- don't disclose(localSetBoard1(_x1, _x2)), 
     // disclose only what you need (localBoardState);
     const localBoardState = localSetBoard(_x1, _x2);
     assert(localBoardState == BoardState.SET, "Please update the state of board1 to SET");
@@ -210,11 +208,11 @@ The final operations of the constructor are public state assignments:
 }// end of constructor
 ```
 
-Setting these publicly allows us to use them in `assert`s to verify the states are as expected before allowing access to specific functions.
+Setting these publicly enables their use in `assert`s to verify the states are as expected before allowing access to specific functions.
 
 ### Accept Game Circuit
 
-The next thing that needs to happen to advance the game, according to our program design, is player2 (Bob) accepts the game and sets their ship locations. So we'll create our circuit signature and get an ID for Bob (specific to this DApp), also verifying that player1 is not attempting to play against themselves:
+The next thing that needs to happen to advance the game, according to our program design, is `player2` (Bob) accepts the game and sets their ship locations. So we'll create our circuit signature and get an ID for Bob (specific to this DApp), also verifying that `player1` is not attempting to play against themselves:
 ```compact 
 export circuit acceptGame(_x1: Uint<8>, _x2: Uint<8>): [] {
     // caller verification checks
@@ -245,7 +243,7 @@ Now we verify the inputs are within bounds:
 }// end of acceptGame
 ```
 
-All checks have now passed, so we can assign the caller as player2:
+All checks have now passed, so we can assign the caller as `player2`:
 ```compact
     // user assignment
     player2 = disclose(pubKey);
@@ -284,7 +282,7 @@ Finally, we update on-chain state to transition to the next game state:
 }// end of acceptGame
 ```
 
-Now both of our players are setup with public commitments to their private data. 
+Now both of our players are set up with public commitments to their private data. Our program will catch any attempt to present different data for ship locations in later `checkBoard` circuits.
 
 ### Hashing Circuits
 
@@ -308,7 +306,7 @@ A similar pattern is used for `getDAppPubKey`, though it only combines the `_sk`
 
 ### Shoot Circuits
 
-Back to the game operation, it is now player1's turn to shoot:
+Back to the game operation, it is now `player1`'s turn to shoot:
 ```compact
 export circuit player1Shoot (x: Uint<8>): [] {
 
@@ -321,7 +319,7 @@ export circuit player1Shoot (x: Uint<8>): [] {
 ```
 We use the same pattern of hashing the `_sk` through `getDappPubKey` to identify the user calling is the same that we have already assigned as `player1`. Any difference in the hashes indicates a different player is calling this circuit.
 
-After we have verified the caller is player1, we'll verify state is as expected and inputs are valid:
+After we have verified the caller is `player1`, we'll verify state is as expected and inputs are valid:
 ```compact
 
     // state verification checks
@@ -348,6 +346,7 @@ Now that the input has been verified, we'll `disclose` the shot in preparation f
 
 }// end of player1Shoot
 ```
+@TODO -- disclose doesn't make a value public, it let's the compiler know you are intending to do so
 
 Finally, we can update on-chain data and state:
 ```compact
@@ -361,7 +360,7 @@ Finally, we can update on-chain data and state:
 
 `player1Shot` is a `List`, allowing ordered access to elements. This program takes the front element from the `List` as the current shot.
 
-Player 2 has the same needs as player 1 in this context, so we'll implement the same circuit with differences in identifiers specific to the appropriate player:
+`player2` has the same needs as `player1` in this context, so we'll implement the same circuit with differences in identifiers specific to the appropriate player:
 ```compact
 export circuit player2Shoot(x: Uint<8>): [] {
     // caller verification checks
@@ -386,13 +385,13 @@ export circuit player2Shoot(x: Uint<8>): [] {
 }// end of player2Shoot
 ```
 
-Inspect this circuit now that you have the code complete in front of you. What is the most noticeable pattern in Shoot circuits? There are more `assert` statements than code operations! 
+Inspect this circuit now that you have the code complete in front of you. What is the most noticeable pattern in `Shoot` circuits? There are more `assert` statements than code operations! 
 
-This is the sign of a safe and secure smart contract. Always `assert` *everything you assume* about a particular piece of data, state or identity. This most commonly equates to: state verification checks, authorization checks, input validation assertions. Only after rigorously verifying the data is as expected should you feel comfortable in using it in your intended functions.
+This is a sign of a safe and secure smart contract. Always `assert` *everything you assume* about a particular piece of data, state or identity. This most commonly equates to: state verification checks, authorization checks, input validation assertions. Only after rigorously verifying the data is as expected should you feel comfortable in using it in your intended functions.
 
 ### Check Boards Locally
 
-The last interesting thing our contract needs to do is allow a user to check their board for a HIT or MISS. Let's start with some detailed `asserts`:
+The last interesting thing our contract needs to do is allow a user to check their board for a HIT or MISS. Let's start with some detailed `asserts` before processing any data:
 ```compact
 export circuit checkBoard1(): [] {
 
@@ -413,9 +412,10 @@ export circuit checkBoard1(): [] {
 
 }// end of checkBoard1
 ```
+
 First the caller is verified to be `player2`, then we verify various state expectations before moving on to storing `currentShot` for processing and clearing `player1Shot` with `popFront()`.
 
-Now we need an honesty check. Remember that claiming a MISS when a shot was in fact a HIT is the most common cheating vector. So we create the honesty check hash and verify state is valid:
+Now we need an honesty check. Remember that claiming a MISS when a shot was in fact a HIT is the most common cheating vector. So we create the `honestyCheckHash` and verify state is valid:
 ```compact
 
     // hash for comparision with on-chain hash
@@ -428,7 +428,7 @@ Now we need an honesty check. Remember that claiming a MISS when a shot was in f
 }// end of checkBoard1
 ```
 
-Now that we know we have one of two possible valid states, we can conditionally handle each. First if a MISS is claimed, we don't trust, we verify:
+Now that we know we have one of two possible valid states, we can conditionally handle each. First if a MISS is claimed -- we don't trust, we verify:
 ```compact
 
     // conditional handling
@@ -467,7 +467,7 @@ Always verify the input is what is expected. Player 1 could claim a HIT when it 
 
 Increment the `board1HitCount`, add it to the previous hits and update `turn` state before checking if this is the HIT that wins the game.
 
-Player 2 has the same needs as player 1 here, so we'll implement the same circuit with different identifier names specific to the appropriate player:
+`player2` has the same needs as `player1` here, so we'll implement the same circuit with different identifier names specific to the appropriate player:
 ```compact
 export circuit checkBoard2(): [] {
     // caller verification
@@ -527,7 +527,6 @@ To further inspect circuit data run the zkir linter:
 npx compact-zkir-linter -r managed/battleship/zkir
 ```
 
-
 ## Witness Tutorial
 
 If you recall from the Compact section of this tutorial, witnesses are only declared in Compact, they are actually implemented in the Typescript frontend. Before writing any Typescript, let's create a config file:
@@ -584,7 +583,7 @@ export type BattlePrivateState = {
 
 `x1` and `x2` are the private locations of a player's ships. The `boardState` starts as a private state piece of data and becomes public to allow the game to start. `shotState` is a shot-by-shot decision made by each player to either present the correct response or to cheat and provide the incorrect response, which our Compact code guards against -- we'll verify this in our frontend test script.
 
-Now we can write a helper function to create an object of our `BattlePrivateState`:
+Now we can write a helper function to create an object of our `BattlePrivateState` type:
 ```typescript
 export const createBattlePrivateState = (
     x1: bigint,
@@ -601,9 +600,9 @@ export const createBattlePrivateState = (
 });
 ```
 
-We'll use this in our tests to create private state for each of our players and well as manipulating their private state.
+We'll use this in our tests to create private state for each of our players as well as when we simulate manipulating their private state.
 
-Now we can write the `witness` functions declared by our Compact code, starting with a simple "getter" of private state data:
+Now we can write the `witnesses` declared by our Compact code, starting with a simple "getter" of private state data:
 ```typescript
 export const witnesses = {
     localSk: ({
@@ -657,7 +656,7 @@ Our final witness function needs to perform a check of a players private state d
 };//end of witnesses
 ```
 
-It is important to note that operations on private state data in Witness functions is not verified in any way. It is imperative that DApp developers always verify that computations in Witness functions were performed to expectations through `assert` statements. We've already built rigorous checks into our `.compact` code and we'll verify their correctness in our frontend test suite.
+It is important to note that operations on private state data in witness functions is not verified in any way. It is imperative that DApp developers always verify that computations in witness functions were performed to expectations through `assert` statements. We've already built rigorous checks into our `.compact` code and we'll verify their correctness in our frontend test suite.
 
 That is everything we need for our witnesses, let's move on to exporting the compiled version of our contract.
 
