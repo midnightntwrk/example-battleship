@@ -45,9 +45,9 @@ export ledger winState: WinState;
 export ledger board1HitCount: Counter;
 export ledger board2HitCount: Counter;
 
+witness localSk(): Bytes<32>;
 witness localSetBoard(_x1: Uint<8>, _x2: Uint<8>): BoardState;
 witness localCheckBoard(x: Uint<8>): ShotState;
-witness localSk(): Bytes<32>;
 
 constructor(_x1: Uint<8>, _x2: Uint<8>) {
     // input verification checks

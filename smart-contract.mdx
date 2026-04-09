@@ -66,9 +66,11 @@ The contract will handle several cheating vectors such as:
 - Claiming a MISS when it was in fact a HIT
 - Changing ship locations mid-game
 
+Smart contract developers *must be diligent in writing defensive programs.* The public and permissionless nature of the blockchain means that our contracts are accessible to anyone with a node command line available to them. Intentionally guarding circuits through access control, input validation and explicit state management will create more secure programs than those without these considerations.
+
 ### State Machines
 
-Compact contracts are best thought of as state machines, so it is best to consider the states of our contract. We'll need states for the following:
+Compact contracts are best thought of as state machines, so we need to consider the states of our contract. We'll need states for the following:
 - BoardState
 - ShotState
 - WinState
@@ -78,9 +80,11 @@ By managing each of these states explicitly and pairing them with `assert`s, we 
 
 
 ## Compact Tutorial
+
 Compact provides the right mix of public and private data management to enable our Battleship implementation elegantly.
 
 ### Setup
+
 Let's start with our compact code:
 ```bash
 mkdir example-battleship && cd example-battleship
@@ -332,7 +336,7 @@ After we have verified the caller is player1, we'll verify state is as expected 
 ```
 
 :::warning
-Be aware of leaking sensitive state data through `assert` checks. The message displayed is what will be returned from the blockchain on a failed called due to a given assertion. This tutorial is explicit in these messages for learning purposes, but a malicious actor to identify sensitive data through these messages.
+Be aware of leaking sensitive state data through `assert` checks. The message displayed is what will be returned from the blockchain on a failed called due to a given assertion. This tutorial is explicit in these messages for learning purposes, but a malicious actor could identify sensitive data through these messages.
 :::
 
 Now that the input has been verified, we'll `disclose` the shot in preparation for public storage and verify that it is not a previously HIT location:
@@ -523,9 +527,188 @@ To further inspect circuit data run the zkir linter:
 npx compact-zkir-linter -r managed/battleship/zkir
 ```
 
-## Test Tutorial
-- Should this be in a new file?
-- Setup
-- Witnesses.ts
-- Index
-- src/config providers wallet
+
+## Witness Tutorial
+
+If you recall from the Compact section of this tutorial, witnesses are only declared in Compact, they are actually implemented in the Typescript frontend. Before writing any Typescript, let's create a config file:
+```bash
+cd ..
+touch tsconfig.json
+```
+
+Now we populate it:
+```json
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "bundler",
+    "lib": ["ES2022"],
+    "strict": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "outDir": "dist",
+    "rootDir": "."
+  },
+  "include": ["src/**/*.ts", "contract/**/*.ts"]
+}
+```
+
+Before moving on to testing our contract, let's setup the necessary witness functionality. From inside the `/contract` directory:
+```bash
+cd contract
+touch witnesses.ts
+```
+
+We'll start with imports:
+```typescript
+import { type Ledger, BoardState, ShotState } from './managed/battleship/contract/index.js';
+import { type WitnessContext } from '@midnight-ntwrk/compact-runtime';
+```
+
+Now we need to think about the private state data relative to our program and create a custom type for it:
+```typescript
+export type BattlePrivateState = {
+    x1: bigint,
+    x2: bigint,
+    boardState: number,
+    shotState: number,
+    sk: Uint8Array,
+};
+```
+
+`x1` and `x2` are the private locations of a player's ships. The `boardState` starts as a private state piece of data and becomes public to allow the game to start. `shotState` is a shot-by-shot decision made by each player to either present the correct response or to cheat and provide the incorrect response, which our Compact code guards against -- we'll verify this in our frontend test script.
+
+Now we can write a helper function to create an object of our `BattlePrivateState`:
+```typescript
+export const createBattlePrivateState = (
+    x1: bigint,
+    x2: bigint,
+    boardState: number,
+    shotState: number,
+    sk: Uint8Array,
+) => ({
+    x1,
+    x2,
+    boardState,
+    shotState,
+    sk
+});
+```
+
+We'll use this in our tests to create private state for each of our players and well as manipulating their private state.
+
+Now we can write the `witness` functions declared by our Compact code, starting with a simple "getter" of private state data:
+```typescript
+export const witnesses = {
+    localSk: ({
+        privateState
+    }: WitnessContext<Ledger, BattlePrivateState>): [
+        BattlePrivateState,
+        Uint8Array
+    ] => {
+        return [privateState, privateState.sk];
+    },// end of localSk
+};// end of witnesses
+```
+
+Witness function signatures must match exactly with the corresponding Compact declaration and they *always* take the `privateState` object as an argument, followed by the `WitnessContext` type with `<Ledger, BattlePrivateState>`. 
+
+The next two lines denote the return type(s) of the function. Witness functions always require passing the `privateState` as the first return value, followed by any returns specified by the function signature.
+
+Next let's implement a "setter" of private state data:
+```typescript
+    localSetBoard: ({
+        privateState
+    }: WitnessContext<Ledger, BattlePrivateState>, x1: bigint, x2: bigint): [
+        BattlePrivateState,
+        BoardState
+    ] => {
+        privateState.x1 = x1;
+        privateState.x2 = x2;
+        privateState.boardState = BoardState.SET;
+        return [privateState, privateState.boardState];
+    },// end of localSetBoard
+};// end of witnesses
+```
+
+The shape of this function is similar to `localSk()` in its requirements, this time we added `x1` and `x2` as inputs followed by setting these in the actual `privateState` object. Finally, we update `privateState.boardState` before returning this value to the contract.
+
+Our final witness function needs to perform a check of a players private state data:
+```typescript
+    localCheckBoard: ({
+        privateState
+    }: WitnessContext<Ledger, BattlePrivateState>, x: bigint): [
+        BattlePrivateState,
+        ShotState
+    ] => {
+        let currentShot = ShotState.MISS;// reset to default -- MISS
+        if(x == privateState.x1 || x == privateState.x2){
+            currentShot = ShotState.HIT;// only HIT if it is in fact a HIT
+        }
+        privateState.shotState = currentShot;
+        return [privateState, privateState.shotState];
+    },// end of localCheckBoard
+};//end of witnesses
+```
+
+It is important to note that operations on private state data in Witness functions is not verified in any way. It is imperative that DApp developers always verify that computations in Witness functions were performed to expectations through `assert` statements. We've already built rigorous checks into our `.compact` code and we'll verify their correctness in our frontend test suite.
+
+That is everything we need for our witnesses, let's move on to exporting the compiled version of our contract.
+
+### Exports
+
+From the `/contract` directory:
+```bash
+touch index.ts
+```
+
+We'll use the `index.ts` file to export our compiled contract and necessary types:
+```typescript
+import { CompiledContract } from '@midnight-ntwrk/compact-js';
+import path from 'node:path';
+
+export {
+    Contract,
+    ledger,
+    pureCircuits,
+    type Witnesses,
+    type Ledger,
+    type ImpureCircuits,
+    type PureCircuits
+} from './managed/battleship/contract/index.js';
+import { Contract } from './managed/battleship/contract/index.js';
+import { witnesses } from './witnesses.js';
+
+const currentDir = path.resolve(new URL(import.meta.url).pathname, '..');
+export const zkConfigPath = path.resolve(currentDir, 'managed', 'battleship');
+
+export const CompiledBattleshipContract = CompiledContract.make(
+    'BattleshipContract',
+    Contract,
+).pipe(
+    CompiledContract.withWitnesses(witnesses),
+    CompiledContract.withCompiledFileAssets(zkConfigPath),
+)
+```
+
+That completes the code needed for Compact and its supporting files. To recap, the directory structure should look like this:
+```
+contract/
+├── managed/
+|   └── battleship/
+|        ├── compiler/
+|        ├── contract/
+|        ├── keys/
+|        └── zkir/
+├── battleship.compact
+├── index.ts
+└── witnesses.ts
+```
+
+The next steps will be covered in the [Battleship Test Tutorial](./battle-test.mdx).

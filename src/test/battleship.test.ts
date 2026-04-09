@@ -134,7 +134,7 @@ describe('Battleship Smart Contract via midnight-js', async () => {
             aliceSk,
         );
 
-        const deployed: any = await (deployContract<Contract>)(aliceProviders, {
+        const deployed: DeployedContract<Contract> = await (deployContract<Contract>)(aliceProviders, {
             compiledContract: CompiledBattleshipContract,
             privateStateId: ALICE_PRIVATE_ID,
             initialPrivateState: alicePrivateState,

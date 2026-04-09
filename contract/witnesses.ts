@@ -42,6 +42,14 @@ export const createBattlePrivateState = (
 });
 
 export const witnesses = {
+    localSk: ({
+        privateState
+    }: WitnessContext<Ledger, BattlePrivateState>): [
+        BattlePrivateState,
+        Uint8Array
+    ] => {
+        return [privateState, privateState.sk];
+    },
     localSetBoard: ({
         privateState
     }: WitnessContext<Ledger, BattlePrivateState>, x1: bigint, x2: bigint): [
@@ -66,12 +74,4 @@ export const witnesses = {
         privateState.shotState = currentShot;
         return [privateState, privateState.shotState];
     },// end of localCheckBoard
-    localSk: ({
-        privateState
-    }: WitnessContext<Ledger, BattlePrivateState>): [
-        BattlePrivateState,
-        Uint8Array
-    ] => {
-        return [privateState, privateState.sk];
-    },
 };
