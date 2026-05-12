@@ -257,6 +257,15 @@
     "@types/object-inspect" "^1.8.1"
     object-inspect "^1.12.3"
 
+"@midnight-ntwrk/compact-runtime@0.16.0":
+  version "0.16.0"
+  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/compact-runtime/-/compact-runtime-0.16.0.tgz#4a2d38a4237b0abd6d833c0ee94baa6318323a79"
+  integrity sha512-UR8+MI5zol+gkne17ZZru8xmZNf11xMgQJkiLT9KWsF+QD8Wuz1WONaqQLL0RAZ2aN2XlRsBFd0ViKDVh8prFw==
+  dependencies:
+    "@midnight-ntwrk/onchain-runtime-v3" "^3.0.0"
+    "@types/object-inspect" "^1.8.1"
+    object-inspect "^1.12.3"
+
 "@midnight-ntwrk/ledger-v8@8.0.3", "@midnight-ntwrk/ledger-v8@^8.0.2", "@midnight-ntwrk/ledger-v8@^8.0.3":
   version "8.0.3"
   resolved "https://registry.yarnpkg.com/@midnight-ntwrk/ledger-v8/-/ledger-v8-8.0.3.tgz#47e343bc08f4c94162a2f12322e0e0a958743613"
