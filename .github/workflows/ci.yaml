@@ -44,6 +44,9 @@ jobs:
       - name: Start local Midnight network
         run: yarn env:up
 
+      - name: Wait for DUST to accrue
+        run: yarn wait:dust
+
       - name: Run tests against local network
         run: yarn test:local
 

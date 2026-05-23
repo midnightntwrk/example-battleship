@@ -12,7 +12,8 @@
     "test:local": "MIDNIGHT_NETWORK=local yarn test",
     "env:up": "docker compose up -d --wait",
     "env:down": "docker compose down",
-    "validate": "yarn env:up && yarn test:local; yarn env:down"
+    "wait:dust": "vite-node scripts/wait-for-dust.ts",
+    "validate": "yarn env:up && yarn wait:dust && yarn test:local; yarn env:down"
   },
   "dependencies": {
     "@midnight-ntwrk/compact-runtime": "0.16.0",
