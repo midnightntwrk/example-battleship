@@ -14,7 +14,7 @@ services:
       start_period: 10s
 
   indexer:
-    image: 'midnightntwrk/indexer-standalone:4.0.1'
+    image: 'midnightntwrk/indexer-standalone:4.3.1@sha256:7d38b22ad2af33acfe519191d96c62ccccc6fd32aa02365abed9191e2d630b54'
     ports:
       - '127.0.0.1:8088:8088'
     environment:
