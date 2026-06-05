@@ -37,7 +37,7 @@
     "@types/node": "^22.0.0",
     "@types/ws": "^8.5.9",
     "typescript": "^5.7.0",
-    "vitest": "^3.0.0"
+    "vitest": "^4.1.0"
   },
   "resolutions": {
     "@midnight-ntwrk/ledger-v8": "8.0.3",
