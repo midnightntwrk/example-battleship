@@ -45,7 +45,7 @@ jobs:
         run: yarn env:up
 
       - name: Wait for DUST to accrue
-        run: yarn wait:dust
+        run: npx vite-node scripts/wait-for-dust.ts
 
       - name: Run tests against local network
         run: yarn test:local
