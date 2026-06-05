@@ -45,7 +45,7 @@ jobs:
         run: yarn env:up
 
       - name: Wait for DUST to accrue
-        run: yarn dlx wait:dust
+        run: yarn wait:dust
 
       - name: Run tests against local network
         run: yarn test:local
