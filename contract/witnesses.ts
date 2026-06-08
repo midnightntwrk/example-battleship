@@ -17,7 +17,7 @@
 // It is good practice to isolate this data so that you can start to think of private state
 // in a different context for your DApp
 import { type Ledger, BoardState, ShotState } from './managed/battleship/contract/index.js';
-import { type WitnessContext } from '@midnight-ntwrk/compact-runtime';
+import { type WitnessContext } from '@midnight-ntwrk/midnight-js-protocol/compact-runtime';
 
 export type BattlePrivateState = {
     x1: bigint,
