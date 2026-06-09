@@ -22,9 +22,9 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { randomBytes } from 'node:crypto';
 import pino from 'pino';
-import { submitCallTx, deployContract } from '@midnight-ntwrk/midnight-js/contracts';
-import { setNetworkId } from '@midnight-ntwrk/midnight-js/network-id';
-import type { ContractAddress } from '@midnight-ntwrk/compact-runtime';
+import { submitCallTx, deployContract } from '@midnight-ntwrk/midnight-js-contracts';
+import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
+import type { ContractAddress } from '@midnight-ntwrk/midnight-js-protocol/compact-runtime';
 import type { EnvironmentConfiguration } from '@midnight-ntwrk/testkit-js';
 import { getConfig } from '../config.js';
 import { MidnightWalletProvider, syncWallet } from '../wallet.js';
@@ -42,7 +42,7 @@ import {
     Contract
 } from '../../contract/managed/battleship/contract/index.js';
 import { createBattlePrivateState } from '../../contract/witnesses.js';
-import type { FinalizedCallTxData } from '@midnight-ntwrk/midnight-js/contracts';
+import type { FinalizedCallTxData } from '@midnight-ntwrk/midnight-js-contracts';
 
 process.on('unhandledRejection', (reason, promise) => {
   console.error('UNHANDLED REJECTION:', reason);

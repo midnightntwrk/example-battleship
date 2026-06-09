@@ -20,8 +20,13 @@ import {
   type FinalizedTransaction,
   LedgerParameters,
   ZswapSecretKeys,
-} from '@midnight-ntwrk/ledger-v8';
-import { types, utils } from '@midnight-ntwrk/midnight-js';
+} from '@midnight-ntwrk/midnight-js-protocol/ledger';
+import {
+  type MidnightProvider,
+  type UnboundTransaction,
+  type WalletProvider,
+} from '@midnight-ntwrk/midnight-js-types';
+import { ttlOneHour } from '@midnight-ntwrk/midnight-js-utils';
 import { type WalletFacade, type FacadeState } from '@midnight-ntwrk/wallet-sdk-facade';
 import {
   type DustWalletOptions,
@@ -31,7 +36,7 @@ import {
 import * as Rx from 'rxjs';
 import type { Logger } from 'pino';
 
-export class MidnightWalletProvider implements types.MidnightProvider, types.WalletProvider {
+export class MidnightWalletProvider implements MidnightProvider, WalletProvider {
   readonly wallet: WalletFacade;
 
   private constructor(
@@ -53,8 +58,8 @@ export class MidnightWalletProvider implements types.MidnightProvider, types.Wal
   }
 
   async balanceTx(
-    tx: types.UnboundTransaction,
-    ttl: Date = utils.ttlOneHour(),
+    tx: UnboundTransaction,
+    ttl: Date = ttlOneHour(),
   ): Promise<FinalizedTransaction> {
     const recipe = await this.wallet.balanceUnboundTransaction(
       tx,
