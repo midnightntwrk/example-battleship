@@ -52,7 +52,10 @@ const envConfig: EnvironmentConfiguration = { walletNetworkId: config.networkId,
 
 logger.info(`Waiting for Alice to have ≥${minCoins} DUST coin(s) (timeout ${timeoutMs}ms)`);
 
-const wallet = await MidnightWalletProvider.build(logger, envConfig, ALICE_SEED);
+const wallet = await MidnightWalletProvider.build(logger, envConfig, {
+  kind: 'seed',
+  value: ALICE_SEED,
+});
 await wallet.start();
 try {
   await syncWallet(logger, wallet.wallet, timeoutMs);

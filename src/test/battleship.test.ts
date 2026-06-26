@@ -25,9 +25,9 @@ import pino from 'pino';
 import { submitCallTx, deployContract } from '@midnight-ntwrk/midnight-js-contracts';
 import { setNetworkId } from '@midnight-ntwrk/midnight-js-network-id';
 import type { ContractAddress } from '@midnight-ntwrk/midnight-js-protocol/compact-runtime';
-import type { EnvironmentConfiguration } from '@midnight-ntwrk/testkit-js';
+import { type EnvironmentConfiguration, waitForFunds } from '@midnight-ntwrk/testkit-js';
 import { getConfig } from '../config.js';
-import { MidnightWalletProvider, syncWallet } from '../wallet.js';
+import { MidnightWalletProvider, syncWallet, type WalletSecret } from '../wallet.js';
 import { buildProviders, type BattleshipProviders } from '../providers.js';
 import {
     CompiledBattleshipContract,
@@ -53,8 +53,45 @@ process.on('uncaughtException', (err) => {
   console.error('UNCAUGHT EXCEPTION:', err);
 });
 
-const ALICE_SEED = '0000000000000000000000000000000000000000000000000000000000000001';
-const BOB_SEED = '0000000000000000000000000000000000000000000000000000000000000002';
+type Role = 'ALICE' | 'BOB';
+
+// Genesis seeds for the local dev node — pre-funded, used only on `local`.
+const LOCAL_SEEDS: Record<Role, string> = {
+    ALICE: '0000000000000000000000000000000000000000000000000000000000000001',
+    BOB:   '0000000000000000000000000000000000000000000000000000000000000002',
+};
+
+function resolveSecret(net: string, role: Role): WalletSecret {
+    if (net === 'local') return { kind: 'seed', value: LOCAL_SEEDS[role] };
+
+    const upper = net.toUpperCase();
+    const mnemonicEnv = `MIDNIGHT_${upper}_${role}_MNEMONIC`;
+    const seedEnv = `MIDNIGHT_${upper}_${role}_SEED`;
+    const mnemonic = process.env[mnemonicEnv]?.trim().replace(/\s+/g, ' ');
+    const seedHex = process.env[seedEnv]?.trim();
+
+    if (mnemonic && seedHex) {
+        throw new Error(
+            `Set only one of ${mnemonicEnv} or ${seedEnv} (both are defined).`,
+        );
+    }
+    if (mnemonic) {
+        return { kind: 'mnemonic', value: mnemonic };
+    }
+    if (seedHex) {
+        if (!/^[0-9a-fA-F]+$/.test(seedHex) || seedHex.length % 2 !== 0) {
+            throw new Error(
+                `${seedEnv} must be a hex string of even length (no 0x prefix).`,
+            );
+        }
+        return { kind: 'seed', value: seedHex };
+    }
+    throw new Error(
+        `Either ${mnemonicEnv} or ${seedEnv} is required for network '${net}'. ` +
+            `Set one in .env.${net} or the shell.`,
+    );
+}
+
 const ALICE_PRIVATE_ID = 'alicePrivateState';
 const BOB_PRIVATE_ID = 'bobPrivateState';
 
@@ -63,7 +100,9 @@ const logger = pino({
     transport: { target: 'pino-pretty' },
 });
 
-describe('Battleship Smart Contract via midnight-js', async () => {
+const network = process.env['MIDNIGHT_NETWORK'] ?? 'local';
+
+describe(`Battleship Smart Contract via midnight-js (${network})`, () => {
     let aliceWallet: MidnightWalletProvider;
     let bobWallet: MidnightWalletProvider;
     let aliceProviders: BattleshipProviders;
@@ -71,6 +110,14 @@ describe('Battleship Smart Contract via midnight-js', async () => {
     let contractAddress: ContractAddress;
 
     const config = getConfig();
+    const aliceSecret = resolveSecret(network, 'ALICE');
+    const bobSecret = resolveSecret(network, 'BOB');
+    const isRemote = config.faucet !== '';
+    const syncTimeoutMs = Number(
+        process.env['MIDNIGHT_SYNC_TIMEOUT_MS'] ??
+            (isRemote ? 60 * 60_000 : 10 * 60_000),
+    );
+
     const board1x1 = BigInt(1);
     const board1x2 = BigInt(2);
     const board2x1 = BigInt(10);
@@ -97,18 +144,34 @@ describe('Battleship Smart Contract via midnight-js', async () => {
             proofServer: config.proofServer,
         };
 
-        aliceWallet = await MidnightWalletProvider.build(logger, envConfig, ALICE_SEED);
+        aliceWallet = await MidnightWalletProvider.build(logger, envConfig, aliceSecret);
         await aliceWallet.start();
-        await syncWallet(logger, aliceWallet.wallet, 600_000);
+        await syncWallet(logger, aliceWallet.wallet, syncTimeoutMs);
 
-        bobWallet = await MidnightWalletProvider.build(logger, envConfig, BOB_SEED);
+        bobWallet = await MidnightWalletProvider.build(logger, envConfig, bobSecret);
         await bobWallet.start();
-        await syncWallet(logger, bobWallet.wallet, 600_000);
+        await syncWallet(logger, bobWallet.wallet, syncTimeoutMs);
+
+        if (isRemote) {
+            // Faucet drip + NIGHT→DUST registration per wallet. Idempotent.
+            for (const [name, w] of [
+                ['Alice', aliceWallet],
+                ['Bob', bobWallet],
+            ] as const) {
+                const nightBalance = await waitForFunds(
+                    w.wallet,
+                    envConfig,
+                    true,
+                    w.unshieldedKeystore,
+                );
+                logger.info(`${name} NIGHT balance on '${network}': ${nightBalance}`);
+            }
+        }
 
         aliceProviders = buildProviders(aliceWallet, zkConfigPath, config);
         bobProviders = buildProviders(bobWallet, zkConfigPath, config);
 
-        logger.info('Providers initialized, ready to test.');
+        logger.info(`Providers initialized on '${network}', ready to test.`);
     });
 
     // tear down after tests
