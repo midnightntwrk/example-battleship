@@ -112,7 +112,7 @@ describe(`Battleship Smart Contract via midnight-js (${network})`, () => {
     const config = getConfig();
     const aliceSecret = resolveSecret(network, 'ALICE');
     const bobSecret = resolveSecret(network, 'BOB');
-    const isRemote = config.faucet !== '';
+    const isRemote = network !== 'local';
     const syncTimeoutMs = Number(
         process.env['MIDNIGHT_SYNC_TIMEOUT_MS'] ??
             (isRemote ? 60 * 60_000 : 10 * 60_000),
@@ -153,7 +153,7 @@ describe(`Battleship Smart Contract via midnight-js (${network})`, () => {
         await syncWallet(logger, bobWallet.wallet, syncTimeoutMs);
 
         if (isRemote) {
-            // Faucet drip + NIGHT→DUST registration per wallet. Idempotent.
+            // NIGHT→DUST registration per wallet. Seeds are pre-funded; idempotent.
             for (const [name, w] of [
                 ['Alice', aliceWallet],
                 ['Bob', bobWallet],
@@ -161,7 +161,7 @@ describe(`Battleship Smart Contract via midnight-js (${network})`, () => {
                 const nightBalance = await waitForFunds(
                     w.wallet,
                     envConfig,
-                    true,
+                    false,
                     w.unshieldedKeystore,
                 );
                 logger.info(`${name} NIGHT balance on '${network}': ${nightBalance}`);
