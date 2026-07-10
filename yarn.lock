@@ -334,40 +334,40 @@
     effect "^3.19.19"
     rxjs "^7.8.2"
 
-"@midnight-ntwrk/wallet-sdk-dust-wallet@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-dust-wallet/-/wallet-sdk-dust-wallet-4.1.0.tgz#54c39bff8b808a9b32364a46f7ca274c58010c80"
-  integrity sha512-RA+Zvb3a4LmyxMFOuHJUZ2I7WbtDHLyKVk1++4q/w3WH/G9dMMyv0H/dxsxjSnIlX9km1Ibf6dxYN4I3fmG9XQ==
+"@midnight-ntwrk/wallet-sdk-dust-wallet@^4.2.0":
+  version "4.2.0"
+  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-dust-wallet/-/wallet-sdk-dust-wallet-4.2.0.tgz#ebbb9480fd876d6d61fcb49c4a392a8b2862018d"
+  integrity sha512-+0soO09mrkJFHF0ffRzpPmCb7p6m5ZhRXDSDOmit9vcheVh8yzt/efKCVzVwhLoCjHuN6gz+J9/od8u0XJcSyw==
   dependencies:
     "@midnight-ntwrk/ledger-v8" "^8.1.0"
     "@midnight-ntwrk/wallet-sdk-abstractions" "^2.1.0"
     "@midnight-ntwrk/wallet-sdk-address-format" "^3.1.2"
     "@midnight-ntwrk/wallet-sdk-capabilities" "^3.3.1"
-    "@midnight-ntwrk/wallet-sdk-indexer-client" "^1.2.2"
-    "@midnight-ntwrk/wallet-sdk-runtime" "^1.0.4"
+    "@midnight-ntwrk/wallet-sdk-indexer-client" "^1.2.3"
+    "@midnight-ntwrk/wallet-sdk-runtime" "^1.0.5"
     "@midnight-ntwrk/wallet-sdk-utilities" "^1.2.0"
     effect "^3.19.19"
     rxjs "^7.8.2"
 
-"@midnight-ntwrk/wallet-sdk-facade@^4.0.1":
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-facade/-/wallet-sdk-facade-4.0.1.tgz#1ce3e836356afd8092b44392df5592400e04686c"
-  integrity sha512-m1AgeoS+jQrj2h5jQRIKv4UT61sWBF5S5PtzGi8/gweug3XYqPlkxJBZKZzS2078QDi9ToH/epWQeoUEqzKhvw==
+"@midnight-ntwrk/wallet-sdk-facade@^4.1.0":
+  version "4.1.0"
+  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-facade/-/wallet-sdk-facade-4.1.0.tgz#23b98625f99d01112a10e44e524178e2e1dd7e52"
+  integrity sha512-6D4GugM6cve4g4UlgMHrdPmpgHWmhlHLwXcCi9MVzksgomZXC9fbXPAOBgWviw+ISvJeCaM05OcTD8noycj36w==
   dependencies:
     "@midnight-ntwrk/ledger-v8" "^8.1.0"
     "@midnight-ntwrk/wallet-sdk-abstractions" "^2.1.0"
     "@midnight-ntwrk/wallet-sdk-address-format" "^3.1.2"
     "@midnight-ntwrk/wallet-sdk-capabilities" "^3.3.1"
-    "@midnight-ntwrk/wallet-sdk-dust-wallet" "^4.1.0"
-    "@midnight-ntwrk/wallet-sdk-indexer-client" "^1.2.2"
-    "@midnight-ntwrk/wallet-sdk-shielded" "^3.0.1"
+    "@midnight-ntwrk/wallet-sdk-dust-wallet" "^4.2.0"
+    "@midnight-ntwrk/wallet-sdk-indexer-client" "^1.2.3"
+    "@midnight-ntwrk/wallet-sdk-shielded" "^3.0.2"
     "@midnight-ntwrk/wallet-sdk-unshielded-wallet" "^3.1.0"
     rxjs "^7.8.2"
 
-"@midnight-ntwrk/wallet-sdk-hd@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-hd/-/wallet-sdk-hd-3.0.2.tgz#b285f090a31156917242a852aa3fdbd9259fb95e"
-  integrity sha512-GdzZsfURF4WBh+bmSiimwOnj2vLjtd1pvMUJjRtY3OOnnr1mSesuX9//UPzb0fCjU1ZMCNb6UK7M2YcI4Gef4A==
+"@midnight-ntwrk/wallet-sdk-hd@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-hd/-/wallet-sdk-hd-3.0.3.tgz#1b457a3d65d17a43cecc0f2ed0ab682bb642aa35"
+  integrity sha512-h4Y6isqsTuOe1tQd0GdylSQ/pRyAe+ndBhVELftCoiot9XQb00BwGmJmWe/HmFh40CwXMdm+D7N9Tc0Jpx+YPQ==
   dependencies:
     "@scure/bip32" "^2.0.1"
     "@scure/bip39" "^2.0.1"
@@ -376,6 +376,18 @@
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-indexer-client/-/wallet-sdk-indexer-client-1.2.2.tgz#8db861a0d6f1278d372f8baddcb4edffdd8abd12"
   integrity sha512-GokfgV1lOhF1h341cuglp1VoTT/+yEDuYIbiPex29JJkFrjOXdJfCKPoROySBtyIyI65lnEBAXBT0+AOBjPzhA==
+  dependencies:
+    "@graphql-typed-document-node/core" "^3.2.0"
+    "@midnight-ntwrk/wallet-sdk-utilities" "^1.2.0"
+    effect "^3.19.19"
+    graphql "^16.13.0"
+    graphql-http "^1.22.4"
+    graphql-ws "^6.0.7"
+
+"@midnight-ntwrk/wallet-sdk-indexer-client@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-indexer-client/-/wallet-sdk-indexer-client-1.2.3.tgz#baa9b36e9adfed9529c4cc435d4f1a51009af3d0"
+  integrity sha512-aOb8TJoix0l6cZBA94igfwifmpLgyQnMEYTpAqfxo82I+GUx4oM/BVYQFjixW7aQgS1wSv/VETObJbHKg4CL8A==
   dependencies:
     "@graphql-typed-document-node/core" "^3.2.0"
     "@midnight-ntwrk/wallet-sdk-utilities" "^1.2.0"
@@ -398,10 +410,36 @@
     bn.js "^5.2.3"
     effect "^3.19.19"
 
+"@midnight-ntwrk/wallet-sdk-node-client@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-node-client/-/wallet-sdk-node-client-1.1.3.tgz#dba3c3be026465f0a62609cde153dd4b8c5b47b5"
+  integrity sha512-SnxoPUXuE9nXlSpblspv2Byu6xEQpQyLtk6U94xsu7pez6ZVGsN7d2PXYsCF2LlrhhS69XzyvBV4dNzb2dESWg==
+  dependencies:
+    "@midnight-ntwrk/wallet-sdk-abstractions" "^2.1.0"
+    "@midnight-ntwrk/wallet-sdk-utilities" "^1.2.0"
+    "@polkadot/api" "^16.5.4"
+    "@polkadot/types" "^16.5.4"
+    "@polkadot/util" "^14.0.1"
+    "@types/bn.js" "^5.2.0"
+    bn.js "^5.2.3"
+    effect "^3.19.19"
+
 "@midnight-ntwrk/wallet-sdk-prover-client@^1.2.1", "@midnight-ntwrk/wallet-sdk-prover-client@^1.2.2":
   version "1.2.2"
   resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-prover-client/-/wallet-sdk-prover-client-1.2.2.tgz#b30f5829e4c580d5951defc0e1b57afc420eeb28"
   integrity sha512-Xbniz3S/ab1uxiEJd3OaBxLkDfygPIAWgNZfApwAeac/U8yUVUjrqJ9aWyruztMY2MZHN7QxUjlcAWDK84hX3A==
+  dependencies:
+    "@effect/platform" "^0.96.0"
+    "@midnight-ntwrk/ledger-v8" "^8.1.0"
+    "@midnight-ntwrk/wallet-sdk-utilities" "^1.2.0"
+    "@midnight-ntwrk/zkir-v2" "^2.1.0"
+    effect "^3.19.19"
+    web-worker "^1.5.0"
+
+"@midnight-ntwrk/wallet-sdk-prover-client@^1.2.3":
+  version "1.2.3"
+  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-prover-client/-/wallet-sdk-prover-client-1.2.3.tgz#53076c08af468feeb191b98954ca6a9212e13782"
+  integrity sha512-UDnLKevM0GjGRBlRI9+Qzyabqt19Wsen57J6IT/1QcqmxMN2FPO1gwqA6OElmGxOc+owNc4vT6GNXr5Es7plaQ==
   dependencies:
     "@effect/platform" "^0.96.0"
     "@midnight-ntwrk/ledger-v8" "^8.1.0"
@@ -420,17 +458,27 @@
     effect "^3.19.19"
     rxjs "^7.8.2"
 
-"@midnight-ntwrk/wallet-sdk-shielded@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-shielded/-/wallet-sdk-shielded-3.0.1.tgz#f4e7c318bc5f0c8cf080c4bc770037bcecf9ad1a"
-  integrity sha512-/jNIXz1T4JvJNG67s1tODTPqb2lnBAZ2TuocZQmFj9N0hG2LYtA35Tm6sFUpy68HfPnxdyEWarK27Wj0VRbEsA==
+"@midnight-ntwrk/wallet-sdk-runtime@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-runtime/-/wallet-sdk-runtime-1.0.5.tgz#532d3192947bb002aae7d407031e1c4b687b57fb"
+  integrity sha512-NDDP+5zklY6TsHPKaANxICTXqwDmcl+8d0iuAKMmzddBkdMdcBukvAl2+h4p/YaAoKbuGzVqp3uFab5Hv1Uqqw==
+  dependencies:
+    "@midnight-ntwrk/wallet-sdk-abstractions" "^2.1.0"
+    "@midnight-ntwrk/wallet-sdk-utilities" "^1.2.0"
+    effect "^3.19.19"
+    rxjs "^7.8.2"
+
+"@midnight-ntwrk/wallet-sdk-shielded@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-shielded/-/wallet-sdk-shielded-3.0.2.tgz#20328c2c34f582f5969b20f4a8ceddffbe8bdc13"
+  integrity sha512-5pkGzqcLN1QDwoW1bYGq7HAduwtFnLDV4+e7XOP/29H3xctdPwJWPco7RVspjQgNMuO+t9R3KpQ7xJBrqY/MHw==
   dependencies:
     "@midnight-ntwrk/ledger-v8" "^8.1.0"
     "@midnight-ntwrk/wallet-sdk-abstractions" "^2.1.0"
     "@midnight-ntwrk/wallet-sdk-address-format" "^3.1.2"
     "@midnight-ntwrk/wallet-sdk-capabilities" "^3.3.1"
-    "@midnight-ntwrk/wallet-sdk-indexer-client" "^1.2.2"
-    "@midnight-ntwrk/wallet-sdk-runtime" "^1.0.4"
+    "@midnight-ntwrk/wallet-sdk-indexer-client" "^1.2.3"
+    "@midnight-ntwrk/wallet-sdk-runtime" "^1.0.5"
     "@midnight-ntwrk/wallet-sdk-utilities" "^1.2.0"
     effect "^3.19.19"
     rxjs "^7.8.2"
@@ -451,29 +499,29 @@
     rxjs "^7.8.2"
 
 "@midnight-ntwrk/wallet-sdk-utilities@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-utilities/-/wallet-sdk-utilities-1.2.0.tgz#7c1736fdfd043192d04c4a324803728242dfb038"
-  integrity sha512-62Q9WeomETvOdyoPcRFX7+OWwOwHuD4/IVQniJwshHdzzLACuy1r/03paXoMH1/+S7CCzFaI1VUEVLcQrtZbaw==
+  version "1.2.1"
+  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk-utilities/-/wallet-sdk-utilities-1.2.1.tgz#7a3d22615866b1759f26d7d10236a8e16750cbf0"
+  integrity sha512-K85cpwKGpAbc4hb7EnlxyGOHNqYLFYZwsxm3AMjIdDglxWYCn04HmuTQiq5SQyWc5WlAgSMomQBGGg4z3vlp4A==
   dependencies:
     effect "^3.19.19"
     rxjs "^7.8.2"
 
-"@midnight-ntwrk/wallet-sdk@1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk/-/wallet-sdk-1.1.0.tgz#d8a60f9e9d3135e91277806923c071c8174956a5"
-  integrity sha512-izZ75+jPa47sI6mJtUvr7f8sSg2zayjMABgsjTYyMcE+ff3C58HKJKCKkUezhO/X0RwtDdi81jLUxohrWjmDoA==
+"@midnight-ntwrk/wallet-sdk@1.1.0", "@midnight-ntwrk/wallet-sdk@1.2.0":
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/@midnight-ntwrk/wallet-sdk/-/wallet-sdk-1.2.0.tgz#d36089c949432316233a63400fe46ed7df3020f8"
+  integrity sha512-9dswqwD4WVgOcXgsDT63a0NTCePaoT5KSU3fZBqVqk0nDyiLOefT0FGzKI1efOm/EQlcCzBZ+jeMOKYRFzhM4w==
   dependencies:
     "@midnight-ntwrk/wallet-sdk-abstractions" "^2.1.0"
     "@midnight-ntwrk/wallet-sdk-address-format" "^3.1.2"
     "@midnight-ntwrk/wallet-sdk-capabilities" "^3.3.1"
-    "@midnight-ntwrk/wallet-sdk-dust-wallet" "^4.1.0"
-    "@midnight-ntwrk/wallet-sdk-facade" "^4.0.1"
-    "@midnight-ntwrk/wallet-sdk-hd" "^3.0.2"
-    "@midnight-ntwrk/wallet-sdk-indexer-client" "^1.2.2"
-    "@midnight-ntwrk/wallet-sdk-node-client" "^1.1.2"
-    "@midnight-ntwrk/wallet-sdk-prover-client" "^1.2.2"
-    "@midnight-ntwrk/wallet-sdk-runtime" "^1.0.4"
-    "@midnight-ntwrk/wallet-sdk-shielded" "^3.0.1"
+    "@midnight-ntwrk/wallet-sdk-dust-wallet" "^4.2.0"
+    "@midnight-ntwrk/wallet-sdk-facade" "^4.1.0"
+    "@midnight-ntwrk/wallet-sdk-hd" "^3.0.3"
+    "@midnight-ntwrk/wallet-sdk-indexer-client" "^1.2.3"
+    "@midnight-ntwrk/wallet-sdk-node-client" "^1.1.3"
+    "@midnight-ntwrk/wallet-sdk-prover-client" "^1.2.3"
+    "@midnight-ntwrk/wallet-sdk-runtime" "^1.0.5"
+    "@midnight-ntwrk/wallet-sdk-shielded" "^3.0.2"
     "@midnight-ntwrk/wallet-sdk-unshielded-wallet" "^3.1.0"
     "@midnight-ntwrk/wallet-sdk-utilities" "^1.2.0"
 
@@ -481,180 +529,6 @@
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/@midnight-ntwrk/zkir-v2/-/zkir-v2-2.1.0.tgz#b3c8b9720535d7e62b86c5ff8341a13a46eb5c7e"
   integrity sha512-UDMujjzCt0SA89uqOFWUL4LZTkxVAS8JjvOaYMAgxlSrWfN7m5th1R1qGlpDJuSH39rbWt6WwtuK3k08Mta6LA==
-
-"@midnightntwrk/wallet-sdk-abstractions@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-abstractions/-/wallet-sdk-abstractions-2.1.0.tgz#6fb4045c1253c2c3fb3d03ed71e5fdecf111d070"
-  integrity sha512-56ErAc2eoJIICFXCe64x1uM0Xw6xfAoZwDqN1Nks5ZrQQvmPrNArS3s4SOEXhSR9X9TJ66T2KBx6M/jepyesfg==
-  dependencies:
-    effect "^3.19.19"
-
-"@midnightntwrk/wallet-sdk-address-format@^3.1.2":
-  version "3.1.2"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-address-format/-/wallet-sdk-address-format-3.1.2.tgz#87d4b2fcc4b8639da54881b2af33d08989b54308"
-  integrity sha512-1eXt4eazKoT6C88/yy++fpxIBhF0o6iSqplc6DuCzNL0uePn7Opg0hiTIap2oEmC25XVXmzPhUa0xiWJzv3TIw==
-  dependencies:
-    "@midnight-ntwrk/ledger-v8" "^8.1.0"
-    "@scure/base" "^2.0.0"
-    "@subsquid/scale-codec" "^4.0.1"
-
-"@midnightntwrk/wallet-sdk-capabilities@^3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-capabilities/-/wallet-sdk-capabilities-3.3.1.tgz#000f89c86bc0a3cd2a67c561dd776de4631dbc53"
-  integrity sha512-DpM9kkwFdAr/0Z0G62qL9U8hG5SOYMtwiPqbStvNhk97E2gGwmu5Yu0Zrdm9PDxCYjWgsudAdnVt0WxE8auUGA==
-  dependencies:
-    "@midnight-ntwrk/ledger-v8" "^8.1.0"
-    "@midnight-ntwrk/zkir-v2" "^2.1.0"
-    "@midnightntwrk/wallet-sdk-abstractions" "^2.1.0"
-    "@midnightntwrk/wallet-sdk-indexer-client" "^1.2.2"
-    "@midnightntwrk/wallet-sdk-node-client" "^1.1.2"
-    "@midnightntwrk/wallet-sdk-prover-client" "^1.2.2"
-    "@midnightntwrk/wallet-sdk-utilities" "^1.2.0"
-    effect "^3.19.19"
-    rxjs "^7.8.2"
-
-"@midnightntwrk/wallet-sdk-dust-wallet@^4.2.0":
-  version "4.2.0"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-dust-wallet/-/wallet-sdk-dust-wallet-4.2.0.tgz#a27b4caec7d3baa88820704c5cb1d4da7c0c1945"
-  integrity sha512-L8BfDPfxh9AG/IPvlfqky8Y81Vg/9jYZ0w4UqYWxH5TNnzq6BwZHVGZTYc/iQLq02NwaGPtbrzePMXpH2gF0CA==
-  dependencies:
-    "@midnight-ntwrk/ledger-v8" "^8.1.0"
-    "@midnightntwrk/wallet-sdk-abstractions" "^2.1.0"
-    "@midnightntwrk/wallet-sdk-address-format" "^3.1.2"
-    "@midnightntwrk/wallet-sdk-capabilities" "^3.3.1"
-    "@midnightntwrk/wallet-sdk-indexer-client" "^1.2.3"
-    "@midnightntwrk/wallet-sdk-runtime" "^1.0.5"
-    "@midnightntwrk/wallet-sdk-utilities" "^1.2.0"
-    effect "^3.19.19"
-    rxjs "^7.8.2"
-
-"@midnightntwrk/wallet-sdk-facade@^4.1.0":
-  version "4.1.0"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-facade/-/wallet-sdk-facade-4.1.0.tgz#25e8c70a02ba00005d46a4599a1a58639d780b83"
-  integrity sha512-GH/iqokeXgazvyYnxVU6S2EWD/fJRxqkB+MNlsk04siyEKEj+jhFFyTsg+loHqGQ9P+9I9xA5k1+rFpTLhI5VA==
-  dependencies:
-    "@midnight-ntwrk/ledger-v8" "^8.1.0"
-    "@midnightntwrk/wallet-sdk-abstractions" "^2.1.0"
-    "@midnightntwrk/wallet-sdk-address-format" "^3.1.2"
-    "@midnightntwrk/wallet-sdk-capabilities" "^3.3.1"
-    "@midnightntwrk/wallet-sdk-dust-wallet" "^4.2.0"
-    "@midnightntwrk/wallet-sdk-indexer-client" "^1.2.3"
-    "@midnightntwrk/wallet-sdk-shielded" "^3.0.2"
-    "@midnightntwrk/wallet-sdk-unshielded-wallet" "^3.1.0"
-    rxjs "^7.8.2"
-
-"@midnightntwrk/wallet-sdk-hd@^3.0.3":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-hd/-/wallet-sdk-hd-3.0.3.tgz#4cbd9c630c0e33a16efebf36f7c3945ace18f12a"
-  integrity sha512-HDRKZdLvgNS9UkKw1W9V+XBCMpiwnBQl/4wyhu8KXy5sXgSRgN35qslrnzM9WtAQP6BzKek2vw7Dk/M8EZC5DA==
-  dependencies:
-    "@scure/bip32" "^2.0.1"
-    "@scure/bip39" "^2.0.1"
-
-"@midnightntwrk/wallet-sdk-indexer-client@^1.2.2", "@midnightntwrk/wallet-sdk-indexer-client@^1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-indexer-client/-/wallet-sdk-indexer-client-1.2.3.tgz#ec03d6828e194d1a6427e0634338486d164be1b8"
-  integrity sha512-iJ2FV33XxFqsoEYBICopsVDREoA8LkkTo+UKB1yx1GpAWe4B8I0TT+6Iyj0zX19LyEVm7dP5IpVROlOhWw9L3g==
-  dependencies:
-    "@graphql-typed-document-node/core" "^3.2.0"
-    "@midnightntwrk/wallet-sdk-utilities" "^1.2.0"
-    effect "^3.19.19"
-    graphql "^16.13.0"
-    graphql-http "^1.22.4"
-    graphql-ws "^6.0.7"
-
-"@midnightntwrk/wallet-sdk-node-client@^1.1.2", "@midnightntwrk/wallet-sdk-node-client@^1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-node-client/-/wallet-sdk-node-client-1.1.3.tgz#a594847d962a4b6aaa02b1467dbf111450a0729c"
-  integrity sha512-ijf3EjDyuBxla2zl3yp/4CD5hsg10M61K8n033lRi7aC7kvUarbrIxUJQz4dgJQ0J73rGRDLyJi1D0II++FmVg==
-  dependencies:
-    "@midnightntwrk/wallet-sdk-abstractions" "^2.1.0"
-    "@midnightntwrk/wallet-sdk-utilities" "^1.2.0"
-    "@polkadot/api" "^16.5.4"
-    "@polkadot/types" "^16.5.4"
-    "@polkadot/util" "^14.0.1"
-    "@types/bn.js" "^5.2.0"
-    bn.js "^5.2.3"
-    effect "^3.19.19"
-
-"@midnightntwrk/wallet-sdk-prover-client@^1.2.2", "@midnightntwrk/wallet-sdk-prover-client@^1.2.3":
-  version "1.2.3"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-prover-client/-/wallet-sdk-prover-client-1.2.3.tgz#2568a5890eb13e33b9a30adfc85e5a4f06f772cb"
-  integrity sha512-1gTpxRzFsXyZLcro0sBo7cgLXiHUbIgV/t/tTDDPwGeoPKX4pLP7go39XDxCtKhe1YjmKquVQ/Qtz7djpshgzw==
-  dependencies:
-    "@effect/platform" "^0.96.0"
-    "@midnight-ntwrk/ledger-v8" "^8.1.0"
-    "@midnight-ntwrk/zkir-v2" "^2.1.0"
-    "@midnightntwrk/wallet-sdk-utilities" "^1.2.0"
-    effect "^3.19.19"
-    web-worker "^1.5.0"
-
-"@midnightntwrk/wallet-sdk-runtime@^1.0.4", "@midnightntwrk/wallet-sdk-runtime@^1.0.5":
-  version "1.0.5"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-runtime/-/wallet-sdk-runtime-1.0.5.tgz#10a902da5c1fc313ab8cddc368f22b32dc3adaab"
-  integrity sha512-0CHGeenRGcm1SommH/fDIXPU4jdee2giNOTDepyO6l46b3nqemhb/drv8RIrc4UIbxATgPJIcWsLrRX/fEu0mQ==
-  dependencies:
-    "@midnightntwrk/wallet-sdk-abstractions" "^2.1.0"
-    "@midnightntwrk/wallet-sdk-utilities" "^1.2.0"
-    effect "^3.19.19"
-    rxjs "^7.8.2"
-
-"@midnightntwrk/wallet-sdk-shielded@^3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-shielded/-/wallet-sdk-shielded-3.0.2.tgz#06dcb00b38d29222d1b477f77bb0edccba32930a"
-  integrity sha512-zzYDKrOXL+igNivpjgJKiHd8USETgAZyOLR2u8nDupHvIsmDlxScxzJO/gULr8Mon3SiCYUkElls5p4aFKz3vg==
-  dependencies:
-    "@midnight-ntwrk/ledger-v8" "^8.1.0"
-    "@midnightntwrk/wallet-sdk-abstractions" "^2.1.0"
-    "@midnightntwrk/wallet-sdk-address-format" "^3.1.2"
-    "@midnightntwrk/wallet-sdk-capabilities" "^3.3.1"
-    "@midnightntwrk/wallet-sdk-indexer-client" "^1.2.3"
-    "@midnightntwrk/wallet-sdk-runtime" "^1.0.5"
-    "@midnightntwrk/wallet-sdk-utilities" "^1.2.0"
-    effect "^3.19.19"
-    rxjs "^7.8.2"
-
-"@midnightntwrk/wallet-sdk-unshielded-wallet@^3.1.0":
-  version "3.1.0"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-unshielded-wallet/-/wallet-sdk-unshielded-wallet-3.1.0.tgz#c36eb628fbe102270bc48aa5ed8f4fe7575b2276"
-  integrity sha512-nqeo1W+81n36T2VoF5/TJcaeXYh5+QE716VwMD/DjQ42+xvVLD2XlckRuUWPzYrVcMRvxaB+Up94K5WVCE+E+w==
-  dependencies:
-    "@midnight-ntwrk/ledger-v8" "^8.1.0"
-    "@midnightntwrk/wallet-sdk-abstractions" "^2.1.0"
-    "@midnightntwrk/wallet-sdk-address-format" "^3.1.2"
-    "@midnightntwrk/wallet-sdk-capabilities" "^3.3.1"
-    "@midnightntwrk/wallet-sdk-indexer-client" "^1.2.2"
-    "@midnightntwrk/wallet-sdk-runtime" "^1.0.4"
-    "@midnightntwrk/wallet-sdk-utilities" "^1.2.0"
-    effect "^3.19.19"
-    rxjs "^7.8.2"
-
-"@midnightntwrk/wallet-sdk-utilities@^1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk-utilities/-/wallet-sdk-utilities-1.2.0.tgz#2bc6e3c4b996a1d61bd74bc3cf46808de8f78202"
-  integrity sha512-Xh5uuCwg4FtAOQCYQ2wkBZtIEt0oCCt1mO3jHLnP+7cyMUQfMNbKwOVi85W3zq+84YFy5DVsN9xifFm75c1MQg==
-  dependencies:
-    effect "^3.19.19"
-    rxjs "^7.8.2"
-
-"@midnightntwrk/wallet-sdk@1.2.0":
-  version "1.2.0"
-  resolved "https://registry.yarnpkg.com/@midnightntwrk/wallet-sdk/-/wallet-sdk-1.2.0.tgz#13dce293d0832ef7182d06b17cacf285ff7ae2bd"
-  integrity sha512-bG/RuW/pJphSuBN0xqmFcVqiXClXdKbubyRQA0XUPK7InoibMMNzXoAto8T2iRqcpKRzRpffvG5U/s6sij0rEg==
-  dependencies:
-    "@midnightntwrk/wallet-sdk-abstractions" "^2.1.0"
-    "@midnightntwrk/wallet-sdk-address-format" "^3.1.2"
-    "@midnightntwrk/wallet-sdk-capabilities" "^3.3.1"
-    "@midnightntwrk/wallet-sdk-dust-wallet" "^4.2.0"
-    "@midnightntwrk/wallet-sdk-facade" "^4.1.0"
-    "@midnightntwrk/wallet-sdk-hd" "^3.0.3"
-    "@midnightntwrk/wallet-sdk-indexer-client" "^1.2.3"
-    "@midnightntwrk/wallet-sdk-node-client" "^1.1.3"
-    "@midnightntwrk/wallet-sdk-prover-client" "^1.2.3"
-    "@midnightntwrk/wallet-sdk-runtime" "^1.0.5"
-    "@midnightntwrk/wallet-sdk-shielded" "^3.0.2"
-    "@midnightntwrk/wallet-sdk-unshielded-wallet" "^3.1.0"
-    "@midnightntwrk/wallet-sdk-utilities" "^1.2.0"
 
 "@msgpackr-extract/msgpackr-extract-darwin-arm64@3.0.4":
   version "3.0.4"
@@ -1719,9 +1593,9 @@ bl@^4.0.3:
     readable-stream "^3.4.0"
 
 bn.js@^5.2.1, bn.js@^5.2.3:
-  version "5.2.4"
-  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.4.tgz#1208fc250bb193fc5f8f0b5fa59e642e706f7103"
-  integrity sha512-QL7sb18rJ1PbdsKsqPA0guxL563vIMwRHgzNrW/uzQuRGN1Cjqd/wonUBAVqHox9KwzHA6vCbM0lXx3k4iQMow==
+  version "5.2.5"
+  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.5.tgz#e81ce41cf25e6f0cd1e05f20a9db8c18405e375f"
+  integrity sha512-Vq886eXykuP5E6HcKSSStP3bJgrE6In5WKxVUvJ8XGpWWYs2xZHWqUwzCtGgEtBcxyd57KBFDPFoUfNzdaHCNg==
 
 brace-expansion@^2.0.1, brace-expansion@^2.0.2:
   version "2.1.2"
@@ -2674,7 +2548,7 @@ picocolors@^1.1.1:
   resolved "https://registry.yarnpkg.com/picocolors/-/picocolors-1.1.1.tgz#3d321af3eab939b083c8f929a1d12cda81c26b6b"
   integrity sha512-xceH2snhtb5M9liqDsmEw56le376mTZkEX/jEb/RxNFyegNul7eNslCXP9FDj/Lcu0X8KEyMceP2ntpaHrDEVA==
 
-picomatch@^4.0.3, picomatch@^4.0.4:
+picomatch@^4.0.3, picomatch@^4.0.4, picomatch@^4.0.5:
   version "4.0.5"
   resolved "https://registry.yarnpkg.com/picomatch/-/picomatch-4.0.5.tgz#51ea57a17d86f605f81039595fbc40ed06a55fab"
   integrity sha512-RvwwcruNjI1ncT5xRakeyS9Lf8lcItv34KD+aif+VH9kduAyfYBipGh12274xtenIPZ119/R9BdTBa8gAwSh0A==
@@ -2897,7 +2771,7 @@ retry@^0.12.0:
   resolved "https://registry.yarnpkg.com/retry/-/retry-0.12.0.tgz#1b42a6266a21f07421d1b0b54b7dc167b01c013b"
   integrity sha512-9LkiTwjUh6rT555DtE9rTX+BKByPfrMzEAtnlEtdEwr3Nkffwiihqe2bWADg+OQRjt9gl6ICdmB/ZFDCGAtSow==
 
-rolldown@~1.1.3:
+rolldown@~1.1.4:
   version "1.1.5"
   resolved "https://registry.yarnpkg.com/rolldown/-/rolldown-1.1.5.tgz#339aae250844351fc55b74e2652d3ebd6fba389d"
   integrity sha512-t9z29cJjXf/vxQ8dyhCSpt6H6aSwHTk8cT5I3iy6SMXuFpk5mB6PL6XfC8PCwrPTx93udwKUm9HRteAlTGBLiA==
@@ -3291,14 +3165,14 @@ util-deprecate@^1.0.1, util-deprecate@~1.0.1:
   integrity sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==
 
 "vite@^6.0.0 || ^7.0.0 || ^8.0.0":
-  version "8.1.3"
-  resolved "https://registry.yarnpkg.com/vite/-/vite-8.1.3.tgz#ce05b445b501014a10e5a8073811759c223e8ac2"
-  integrity sha512-Ds+gBRbj0lwRO2Y5hwnUBdxSwlAve9LeRyU4sNnAr0ewW0gWF0n5bgXgUzbgZ49MV9BVUAQUFYVcDUcilUExMA==
+  version "8.1.4"
+  resolved "https://registry.yarnpkg.com/vite/-/vite-8.1.4.tgz#3cd711f31de805e5154ab47948349e693314d581"
+  integrity sha512-bTT9PsdWO+MQMNG9ZXIP/qM9wGh37DFxTV/sPq9cFpHr3w4jkgef032PkAL9jAqhk3Nz8NQw3O8n6/xFkqO4QQ==
   dependencies:
     lightningcss "^1.32.0"
-    picomatch "^4.0.4"
+    picomatch "^4.0.5"
     postcss "^8.5.16"
-    rolldown "~1.1.3"
+    rolldown "~1.1.4"
     tinyglobby "^0.2.17"
   optionalDependencies:
     fsevents "~2.3.3"
