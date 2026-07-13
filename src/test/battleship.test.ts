@@ -115,7 +115,7 @@ describe(`Battleship Smart Contract via midnight-js (${network})`, () => {
     const isRemote = network !== 'local';
     const syncTimeoutMs = Number(
         process.env['MIDNIGHT_SYNC_TIMEOUT_MS'] ??
-            (isRemote ? 60 * 60_000 : 10 * 60_000),
+            (isRemote ? 3 * 60 * 60_000 : 10 * 60_000),
     );
 
     const board1x1 = BigInt(1);
