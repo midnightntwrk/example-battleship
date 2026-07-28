@@ -41,8 +41,17 @@ services:
     image: 'midnightntwrk/midnight-node:1.0.0'
     ports:
       - '127.0.0.1:9944:9944'
+    # /health goes green at genesis, ~2s before block 1 exists, but the
+    # indexer's spo-indexer treats a missing block 1 as fatal ("Cannot
+    # construct OnlineClientAtBlock: block number 1 not found"). Gate on
+    # block 1 instead, so `depends_on: service_healthy` actually holds.
     healthcheck:
-      test: ['CMD', 'curl', '-f', 'http://localhost:9944/health']
+      test:
+        - CMD-SHELL
+        - >-
+          curl -fsS -H 'Content-Type: application/json'
+          -d '{"jsonrpc":"2.0","id":1,"method":"chain_getBlockHash","params":[1]}'
+          http://localhost:9944 | grep -q '"result":"0x'
       interval: 2s
       timeout: 5s
       retries: 20

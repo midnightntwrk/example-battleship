@@ -20,7 +20,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout code
-        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd  #v6.0.2
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0  #v7.0.0
 
       - name: Setup Compact Compiler
         uses: midnightntwrk/setup-compact-action@836895c8fffbbea6bd986af2b17e8941ff29d1f8
@@ -50,6 +50,25 @@ jobs:
       - name: Run tests against local network
         run: yarn test:local
 
+      # Must run before env:down, which deletes the containers and their logs.
+      - name: Capture service logs
+        if: always()
+        run: |
+          mkdir -p logs/docker
+          docker compose ps --all
+          for svc in $(docker compose config --services); do
+            docker compose logs --no-color --timestamps "$svc" \
+              > "logs/docker/$svc.log" 2>&1 || true
+          done
+          # Surface dead services inline so the job log alone explains the failure.
+          docker compose ps --all --format '{{.Service}} {{.State}} {{.ExitCode}}' \
+            | while read -r svc state code; do
+              [ "$state" = running ] && [ "$code" = 0 ] && continue
+              echo "::group::$svc ($state, exit $code) - last 50 lines"
+              tail -n 50 "logs/docker/$svc.log" || true
+              echo "::endgroup::"
+            done
+
       - name: Stop local Midnight network
         if: always()
         run: yarn env:down
@@ -60,5 +79,5 @@ jobs:
         with:
           name: docker-compose-logs
           path: logs/
-          if-no-files-found: ignore
+          if-no-files-found: warn
           retention-days: 7
