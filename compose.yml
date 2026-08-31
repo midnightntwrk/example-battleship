@@ -14,7 +14,7 @@ services:
       start_period: 10s
 
   indexer:
-    image: 'midnightntwrk/indexer-standalone:4.3.3'
+    image: 'midnightntwrk/indexer-standalone:4.3.5@sha256:1c69c6632df859140a4019af9d7ebb81cb6073b1d39194d3eabaa1b320883499'
     ports:
       - '127.0.0.1:8088:8088'
     environment:
@@ -38,7 +38,7 @@ services:
         condition: service_healthy
 
   node:
-    image: 'midnightntwrk/midnight-node:1.0.0'
+    image: 'midnightntwrk/midnight-node:1.0.1@sha256:a340cdea456d58d79c0d0e6c8891a3988b472febc228496d33c8448cc1b5b632'
     ports:
       - '127.0.0.1:9944:9944'
     # /health goes green at genesis, ~2s before block 1 exists, but the
