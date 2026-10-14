@@ -1,3 +1,10 @@
+> [!WARNING]
+> **This repository is archived and no longer maintained.**
+>
+> `example-battleship` now lives in [midnight-examples](https://github.com/midnightntwrk/midnight-examples), Midnight's example monorepo, where every example compiles and runs against one pinned toolchain in CI.
+>
+> Use [`examples/battleship`](https://github.com/midnightntwrk/midnight-examples/tree/main/examples/battleship) and follow the [battleship tutorial](https://docs.midnight.network/tutorials/battleship). This repo is read-only and will not be updated for future SDK releases.
+
 # Battleship Example
 
 This repository demonstrates a simple version of the board game Battleship. The game board is represented as a single number line and ships are a single number placed on the number line. The first player to guess the 2 ship locations wins the game.
